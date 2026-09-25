@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sextant}
+      POSTGRES_USER: ${POSTGRES_USER:-sextant}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sextant} -d ${POSTGRES_DB:-sextant}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - sextant-db-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SEXTANT_ENV: production
+      SEXTANT_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sextant}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sextant}
+    ports:
+      - "127.0.0.1:8000:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  sextant-db-data:
