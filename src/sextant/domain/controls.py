@@ -44,6 +44,19 @@ class ImplementationStatus(StrEnum):
         return self in (ImplementationStatus.IMPLEMENTED, ImplementationStatus.PARTIALLY_IMPLEMENTED)
 
 
+class ControlFrequency(StrEnum):
+    """How often the control operates. This drives the audit convention for sample sizes."""
+
+    CONTINUOUS = "continuous"  # automated
+    MULTIPLE_DAILY = "multiple_daily"
+    DAILY = "daily"
+    WEEKLY = "weekly"
+    MONTHLY = "monthly"
+    QUARTERLY = "quarterly"
+    ANNUAL = "annual"
+    EVENT_DRIVEN = "event_driven"
+
+
 class TestKind(StrEnum):
     DESIGN = "design"
     OPERATING = "operating"
@@ -119,6 +132,7 @@ class Control(_Frozen):
     type: ControlType
     owner: str
     status: ImplementationStatus
+    frequency: ControlFrequency = ControlFrequency.CONTINUOUS
     mappings: list[FrameworkMapping] = Field(default_factory=list)
     tests: list[ControlTest] = Field(default_factory=list)
     evidence: list[str] = Field(default_factory=list, description="Evidence ids for implementation.")

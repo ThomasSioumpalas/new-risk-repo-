@@ -1,0 +1,87 @@
+id: nist_ai_rmf_1_0
+name: NIST AI Risk Management Framework 1.0 (category level)
+version: '1.0'
+publisher: National Institute of Standards and Technology
+source: NIST AI 100-1 (January 2023), Section 5, AI RMF Core categories
+license: Public domain (work of the U.S. Government, 17 U.S.C. 105)
+text_policy: verbatim
+kind: voluntary_framework
+groups:
+- id: GOVERN
+  title: Govern
+  parent: ''
+- id: MAP
+  title: Map
+  parent: ''
+- id: MEASURE
+  title: Measure
+  parent: ''
+- id: MANAGE
+  title: Manage
+  parent: ''
+requirements:
+- id: GOVERN-1
+  group: GOVERN
+  title: Policies, processes, procedures, and practices across the organization related to the mapping, measuring, and managing
+    of AI risks are in place, transparent, and implemented effectively.
+- id: GOVERN-2
+  group: GOVERN
+  title: Accountability structures are in place so that the appropriate teams and individuals are empowered, responsible,
+    and trained for mapping, measuring, and managing AI risks.
+- id: GOVERN-3
+  group: GOVERN
+  title: Workforce diversity, equity, inclusion, and accessibility processes are prioritized in the mapping, measuring, and
+    managing of AI risks throughout the lifecycle.
+- id: GOVERN-4
+  group: GOVERN
+  title: Organizational teams are committed to a culture that considers and communicates AI risk.
+- id: GOVERN-5
+  group: GOVERN
+  title: Processes are in place for robust engagement with relevant AI actors.
+- id: GOVERN-6
+  group: GOVERN
+  title: Policies and procedures are in place to address AI risks and benefits arising from third-party software and data
+    and other supply chain issues.
+- id: MAP-1
+  group: MAP
+  title: Context is established and understood.
+- id: MAP-2
+  group: MAP
+  title: Categorization of the AI system is performed.
+- id: MAP-3
+  group: MAP
+  title: AI capabilities, targeted usage, goals, and expected benefits and costs compared with appropriate benchmarks are
+    understood.
+- id: MAP-4
+  group: MAP
+  title: Risks and benefits are mapped for all components of the AI system including third-party software and data.
+- id: MAP-5
+  group: MAP
+  title: Impacts to individuals, groups, communities, organizations, and society are characterized.
+- id: MEASURE-1
+  group: MEASURE
+  title: Appropriate methods and metrics are identified and applied.
+- id: MEASURE-2
+  group: MEASURE
+  title: AI systems are evaluated for trustworthy characteristics.
+- id: MEASURE-3
+  group: MEASURE
+  title: Mechanisms for tracking identified AI risks over time are in place.
+- id: MEASURE-4
+  group: MEASURE
+  title: Feedback about efficacy of measurement is gathered and assessed.
+- id: MANAGE-1
+  group: MANAGE
+  title: AI risks based on assessments and other analytical output from the MAP and MEASURE functions are prioritized, responded
+    to, and managed.
+- id: MANAGE-2
+  group: MANAGE
+  title: Strategies to maximize AI benefits and minimize negative impacts are planned, prepared, implemented, documented,
+    and informed by input from relevant AI actors.
+- id: MANAGE-3
+  group: MANAGE
+  title: AI risks and benefits from third-party entities are managed.
+- id: MANAGE-4
+  group: MANAGE
+  title: Risk treatments, including response and recovery, and communication plans for the identified and measured AI risks
+    are documented and monitored regularly.

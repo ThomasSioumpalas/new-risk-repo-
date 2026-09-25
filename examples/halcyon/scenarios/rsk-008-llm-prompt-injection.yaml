@@ -1,0 +1,71 @@
+id: RSK-008
+title: LLM assistant discloses other customers' shipment data via prompt injection
+description: >-
+  A portal user crafts prompts that make the customer-service assistant
+  retrieve and reveal shipment details (names, addresses, delivery notes) that
+  belong to other customers.
+category: ai_system
+owner: Head of Digital
+assets: [AST-LLM, AST-CUSTDATA, AST-PORTAL]
+threat:
+  source_type: adversarial
+  source: Malicious or curious portal users
+  event: Prompt injection leading to cross-customer data disclosure
+vulnerabilities:
+  - Assistant's retrieval tool can query any shipment by reference number
+  - Authorisation decisions partly delegated to the model's instructions
+properties: [confidentiality]
+
+threat_event_frequency:
+  dist: lognormal
+  low: 20
+  high: 400
+  source: Guardrail telemetry, first six months in production
+  rationale: Injection attempts per year that reach the production assistant.
+susceptibility:
+  dist: beta_from_trials
+  successes: 7
+  trials: 200
+  source: LLM red-team report (EV-008)
+  rationale: Share of red-team injection attempts that disclosed out-of-scope data, measured against the production guardrails.
+primary_losses:
+  - name: triage_and_notification
+    form: response
+    magnitude: {dist: pert, min: 2000, mode: 8000, max: 40000}
+secondary_loss:
+  probability: {dist: pert, min: 0.05, mode: 0.15, max: 0.3}
+  components:
+    - name: regulatory_action
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 20000, high: 800000}
+    - name: ai_incident_publicity
+      form: reputation
+      magnitude: {dist: lognormal, low: 20000, high: 1000000}
+
+controls: []
+
+treatments:
+  - id: T1
+    title: Least-privilege retrieval enforced outside the model
+    type: modify
+    description: Implement CTL-AI-02 so the retrieval tool only returns shipments bound to the authenticated session.
+    add_controls:
+      - control_id: CTL-AI-02
+        target: susceptibility
+        reduction: {dist: pert, min: 0.85, mode: 0.95, max: 0.99}
+        operating_rate: {dist: pert, min: 0.95, mode: 0.99, max: 0.999}
+        rationale: Authorisation in code, not in the prompt, removes the cross-customer path; residual risk comes from session and IDOR bugs.
+    one_time_cost: 60000
+    annual_cost: 10000
+  - id: T2
+    title: Disable the assistant's shipment-lookup feature
+    type: avoid
+    description: Withdraw the retrieval capability until T1 is delivered; the assistant keeps answering generic questions.
+    annual_cost: 150000
+selected_treatment: T1
+
+assumptions:
+  - Susceptibility is measured against the production guardrails (CTL-AI-01), so CTL-AI-01 is not credited separately, to avoid double counting.
+  - The cost of T2 is the opportunity cost of lost self-service (fewer deflected contact-centre calls).
+  - Red-team attempts are assumed representative of real attacker attempts. This is a strong assumption; real attackers adapt.
+references: ["nist_ai_rmf_1_0:MAP-4", "nist_ai_rmf_1_0:MEASURE-2", "nist_ai_rmf_1_0:MANAGE-1"]

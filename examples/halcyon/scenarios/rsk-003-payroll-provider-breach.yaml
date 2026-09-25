@@ -1,0 +1,61 @@
+id: RSK-003
+title: Payroll SaaS provider breach exposes employee data
+description: >-
+  The external payroll provider suffers a breach that includes Halcyon's tenant,
+  exposing employee identity and bank details.
+category: third_party
+owner: HR Director
+assets: [AST-PAYROLL]
+threat:
+  source_type: adversarial
+  source: Attackers targeting the payroll provider
+  event: Breach of the provider's multi-tenant platform
+vulnerabilities:
+  - Concentration of sensitive employee data at a single provider
+properties: [confidentiality]
+
+threat_event_frequency:
+  dist: gamma_from_events
+  events: 0
+  exposure_years: 6
+  prior_low: 0.02
+  prior_high: 0.25
+  source: "Prior: expert view of SaaS-provider breach rates. Data: 0 breaches in 6 years with this provider."
+  rationale: The Bayesian update moves the prior only modestly; 6 incident-free years is weak evidence for a rare event.
+susceptibility:
+  dist: pert
+  min: 0.3
+  mode: 0.6
+  max: 0.9
+  rationale: Probability that a provider breach includes Halcyon's tenant data.
+primary_losses:
+  - name: notification_and_monitoring
+    form: response
+    magnitude: {dist: pert, min: 40000, mode: 90000, max: 250000, rationale: "Notifying 1,100 employees, credit monitoring, legal review."}
+  - name: payroll_disruption
+    form: productivity
+    magnitude: {dist: pert, min: 0, mode: 20000, max: 100000}
+secondary_loss:
+  probability: {dist: pert, min: 0.05, mode: 0.15, max: 0.4}
+  components:
+    - name: employee_claims
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 20000, high: 600000}
+
+controls:
+  - control_id: CTL-TPR-01
+    target: threat_event_frequency
+    reduction: {dist: pert, min: 0.1, mode: 0.25, max: 0.4}
+    rationale: Due diligence selected a provider with a clean SOC 2 Type II report and contractual security obligations.
+  - control_id: CTL-IR-01
+    target: secondary_loss_probability
+    reduction: {dist: pert, min: 0.2, mode: 0.4, max: 0.6}
+    rationale: Prompt, well-handled notification reduces employee claims.
+
+treatments:
+  - id: T1
+    title: Retain within appetite; review at contract renewal
+    type: retain
+    description: Residual risk is within appetite. Accept for 12 months and reassess when the next SOC 2 report arrives.
+selected_treatment: T1
+references: ["nist_csf_2_0:GV.SC-07", "nis2_2022_2555:21.2.d"]

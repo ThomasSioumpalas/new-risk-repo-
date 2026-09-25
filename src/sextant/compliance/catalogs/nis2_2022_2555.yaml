@@ -1,0 +1,67 @@
+id: nis2_2022_2555
+name: NIS2 Directive (EU) 2022/2555 - selected articles
+version: '2022'
+publisher: European Parliament and Council of the European Union
+source: Directive (EU) 2022/2555, Articles 20, 21 and 23 (OJ L 333, 27.12.2022)
+license: EU legislation; reuse permitted (Commission Decision 2011/833/EU). Wording abridged; the Official Journal text is
+  authoritative. National transposition may add requirements.
+text_policy: abridged
+kind: regulation
+groups:
+- id: '20'
+  title: Article 20 - Governance
+  parent: ''
+- id: '21'
+  title: Article 21 - Cybersecurity risk-management measures
+  parent: ''
+- id: '23'
+  title: Article 23 - Reporting obligations
+  parent: ''
+requirements:
+- id: '20.1'
+  group: '20'
+  title: Management bodies approve the cybersecurity risk-management measures, oversee their implementation and can be held
+    liable for infringements.
+- id: '20.2'
+  group: '20'
+  title: Members of management bodies follow cybersecurity training; similar training is offered to employees regularly.
+- id: '21.1'
+  group: '21'
+  title: Appropriate and proportionate technical, operational and organisational measures to manage risks to network and information
+    systems, taking an all-hazards approach.
+- id: 21.2.a
+  group: '21'
+  title: Policies on risk analysis and information system security.
+- id: 21.2.b
+  group: '21'
+  title: Incident handling.
+- id: 21.2.c
+  group: '21'
+  title: Business continuity, such as backup management and disaster recovery, and crisis management.
+- id: 21.2.d
+  group: '21'
+  title: Supply chain security, including security aspects of relationships with direct suppliers and service providers.
+- id: 21.2.e
+  group: '21'
+  title: Security in network and information systems acquisition, development and maintenance, including vulnerability handling
+    and disclosure.
+- id: 21.2.f
+  group: '21'
+  title: Policies and procedures to assess the effectiveness of cybersecurity risk-management measures.
+- id: 21.2.g
+  group: '21'
+  title: Basic cyber hygiene practices and cybersecurity training.
+- id: 21.2.h
+  group: '21'
+  title: Policies and procedures regarding the use of cryptography and, where appropriate, encryption.
+- id: 21.2.i
+  group: '21'
+  title: Human resources security, access control policies and asset management.
+- id: 21.2.j
+  group: '21'
+  title: Multi-factor or continuous authentication, secured voice/video/text communications and secured emergency communications,
+    where appropriate.
+- id: '23.4'
+  group: '23'
+  title: 'Staged incident reporting for significant incidents: early warning within 24 hours, incident notification within
+    72 hours, final report within one month.'

@@ -1,0 +1,140 @@
+id: RSK-001
+title: Ransomware halts warehouse operations
+description: >-
+  A financially motivated group gains initial access (phishing or an unpatched
+  internet-facing service), escalates privileges, exfiltrates data and encrypts
+  WMS and ERP servers, halting dispatch until systems are restored.
+category: malware_ransomware
+owner: Chief Operating Officer
+assets: [AST-OPS, AST-WMS, AST-ERP, AST-IDP]
+threat:
+  source_type: adversarial
+  source: Financially motivated ransomware affiliate
+  event: Intrusion leading to data theft and encryption of WMS and ERP
+vulnerabilities:
+  - Flat network between warehouse and server zones
+  - Legacy WMS appliances with slow patching
+  - EDR not deployed on 30% of servers
+properties: [availability, confidentiality, integrity]
+
+threat_event_frequency:
+  dist: lognormal
+  low: 1
+  high: 8
+  source: CTI workshop 2026-05 (SOC lead, CISO, IR retainer)
+  rationale: Serious intrusion attempts per year that reach an internal foothold, for a company of this size and sector.
+susceptibility:
+  dist: pert
+  min: 0.1
+  mode: 0.3
+  max: 0.6
+  source: CTI workshop 2026-05
+  rationale: Probability that such an intrusion progresses to encryption if none of the linked controls existed.
+primary_losses:
+  - name: operations_halted
+    form: productivity
+    magnitude: {dist: lognormal, low: 400000, high: 6000000, source: Finance BIA 2026, rationale: "EUR 0.2-0.6M lost margin and penalties per day, for 2-10 days."}
+  - name: incident_response
+    form: response
+    magnitude: {dist: pert, min: 150000, mode: 400000, max: 1200000, source: IR retainer rate card}
+  - name: rebuild
+    form: replacement
+    magnitude: {dist: lognormal, low: 20000, high: 300000, source: IT infrastructure estimate}
+secondary_loss:
+  probability:
+    dist: pert
+    min: 0.2
+    mode: 0.4
+    max: 0.7
+    rationale: Share of ransomware cases with confirmed personal-data exfiltration (double extortion).
+  components:
+    - name: regulatory_and_claims
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 100000, high: 3000000, source: Legal counsel}
+    - name: customer_churn
+      form: reputation
+      magnitude: {dist: lognormal, low: 200000, high: 4000000, source: Commercial director}
+
+controls:
+  - control_id: CTL-EML-01
+    target: threat_event_frequency
+    reduction: {dist: pert, min: 0.2, mode: 0.4, max: 0.6}
+    rationale: Filtering and sandboxing stop part of the phishing-borne initial access before it reaches users.
+  - control_id: CTL-IAM-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.3, mode: 0.5, max: 0.7}
+    coverage: 0.9
+    rationale: MFA blocks stolen-credential access to VPN and SSO; service accounts (10%) are not covered.
+  - control_id: CTL-EDR-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.4, mode: 0.6, max: 0.8}
+    coverage: 0.7
+    rationale: EDR containment interrupts encryption on covered hosts; 30% of servers are not covered.
+  - control_id: CTL-VUL-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.1, mode: 0.25, max: 0.4}
+    rationale: Timely patching closes exploited edge vulnerabilities (the SLA is currently missed on legacy appliances).
+  - control_id: CTL-BKP-01
+    target: primary_loss
+    loss_forms: [productivity, replacement]
+    reduction: {dist: pert, min: 0.3, mode: 0.55, max: 0.75}
+    rationale: Immutable backups allow restoration without paying and shorten the outage.
+
+treatments:
+  - id: T1
+    title: EDR on all servers with 24/7 managed detection and response
+    type: modify
+    description: Extend EDR to 100% of servers and contract an MDR service for round-the-clock containment.
+    change_controls:
+      - control_id: CTL-EDR-01
+        coverage: 1.0
+        operating_rate: {dist: pert, min: 0.9, mode: 0.97, max: 0.995}
+        rationale: MDR contract with a 30-minute containment SLA; vendor-reported containment success.
+    add_controls:
+      - control_id: CTL-EDR-01
+        target: primary_loss
+        loss_forms: [productivity]
+        reduction: {dist: pert, min: 0.15, mode: 0.3, max: 0.45}
+        operating_rate: {dist: pert, min: 0.85, mode: 0.95, max: 0.99}
+        rationale: Faster containment by the MDR limits the number of encrypted sites.
+    one_time_cost: 40000
+    annual_cost: 180000
+  - id: T2
+    title: Segment warehouse and server networks
+    type: modify
+    description: Implement CTL-SEG-01 to limit lateral movement and blast radius.
+    add_controls:
+      - control_id: CTL-SEG-01
+        target: primary_loss
+        loss_forms: [productivity]
+        reduction: {dist: pert, min: 0.2, mode: 0.4, max: 0.6}
+        operating_rate: {dist: pert, min: 0.8, mode: 0.9, max: 0.97}
+        rationale: Segmentation confines encryption to fewer sites; design target after implementation.
+    one_time_cost: 250000
+    annual_cost: 30000
+  - id: T3
+    title: Cyber insurance
+    type: share
+    description: Per-occurrence cyber policy. Fines are excluded, and accountability for the risk stays with Halcyon.
+    insurance: {deductible: 250000, limit: 5000000}
+    annual_cost: 95000
+selected_treatment: T1
+
+qualitative:
+  inherent:
+    likelihood: {level: 4, rationale: "Sector peers report ransomware attempts every year; our exposure is typical."}
+    impact:
+      financial: {level: 5, rationale: "A multi-day dispatch stop across warehouses exceeds EUR 5M."}
+      operational: {level: 5, rationale: "All warehouses depend on the WMS."}
+      legal_regulatory: {level: 4, rationale: "NIS2 significant incident; GDPR breach if data is exfiltrated."}
+  current:
+    likelihood: {level: 3, rationale: "MFA, EDR and email filtering reduce successful intrusions."}
+    impact:
+      financial: {level: 4, rationale: "Tested backups cap the outage at days, not weeks."}
+      operational: {level: 4, rationale: "Restores tested quarterly; one RTO miss this year."}
+      legal_regulatory: {level: 4, rationale: "Unchanged: exfiltration is still possible."}
+
+assumptions:
+  - Business-interruption cost per day comes from the 2026 BIA; seasonality is not modelled.
+  - Ransom payment is excluded because board policy is not to pay.
+references: ["nist_csf_2_0:DE.CM-09", "nis2_2022_2555:21.2.c"]

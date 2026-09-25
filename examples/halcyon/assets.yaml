@@ -1,0 +1,89 @@
+- id: AST-OPS
+  name: Order-to-delivery process
+  type: business_process
+  owner: Chief Operating Officer
+  description: End-to-end process from order intake to proof of delivery; the primary asset most scenarios ultimately affect.
+  confidentiality: medium
+  integrity: high
+  availability: high
+- id: AST-WMS
+  name: Warehouse management system
+  type: application
+  owner: Head of Logistics IT
+  description: Hosted WMS controlling inbound, picking and dispatch in all warehouses.
+  confidentiality: medium
+  integrity: high
+  availability: high
+- id: AST-ERP
+  name: ERP and finance platform
+  type: application
+  owner: Chief Financial Officer
+  description: Invoicing, procurement and general ledger.
+  confidentiality: high
+  integrity: high
+  availability: medium
+- id: AST-PORTAL
+  name: Customer shipment-tracking portal
+  type: application
+  owner: Head of Digital
+  description: Internet-facing portal with consignee names, addresses and phone numbers.
+  classification: confidential
+  confidentiality: high
+  integrity: medium
+  availability: high
+  contains_personal_data: true
+- id: AST-CUSTDATA
+  name: Customer and consignee personal data
+  type: information
+  owner: Data Protection Officer
+  description: About 2.4 million consignee records (name, address, phone, delivery notes).
+  classification: confidential
+  confidentiality: high
+  integrity: medium
+  availability: medium
+  contains_personal_data: true
+- id: AST-IDP
+  name: Identity provider and directory
+  type: infrastructure
+  owner: Head of IT Infrastructure
+  description: Directory and SSO for workforce and administrators; the crown-jewel control plane.
+  confidentiality: high
+  integrity: high
+  availability: high
+- id: AST-CLOUD
+  name: Public cloud tenancy (object storage)
+  type: cloud_service
+  owner: Head of IT Infrastructure
+  description: Object storage for customs documents and proofs of delivery.
+  classification: confidential
+  confidentiality: high
+  integrity: medium
+  availability: medium
+  contains_personal_data: true
+- id: AST-PAYROLL
+  name: Payroll SaaS provider
+  type: supplier
+  owner: HR Director
+  description: External payroll processor holding employee personal and bank data.
+  classification: restricted
+  confidentiality: high
+  integrity: high
+  availability: low
+  contains_personal_data: true
+- id: AST-LLM
+  name: Customer-service LLM assistant
+  type: ai_system
+  owner: Head of Digital
+  description: LLM assistant answering shipment queries; retrieves from the shipment database through tool calls.
+  confidentiality: high
+  integrity: medium
+  availability: medium
+  contains_personal_data: true
+- id: AST-EMAIL
+  name: Email and collaboration suite
+  type: cloud_service
+  owner: Head of IT Infrastructure
+  description: Workforce email; the main initial-access vector for phishing.
+  confidentiality: medium
+  integrity: medium
+  availability: medium

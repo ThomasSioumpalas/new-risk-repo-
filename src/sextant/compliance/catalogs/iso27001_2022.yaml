@@ -1,0 +1,405 @@
+# Identifiers + paraphrased topic labels only (see license field).
+id: iso27001_2022
+name: ISO/IEC 27001:2022
+version: '2022'
+publisher: ISO/IEC
+source: ISO/IEC 27001:2022 (clause and Annex A identifiers only)
+license: Copyrighted standard. This file contains identifiers and short topic labels written for Sextant; it does not reproduce
+  the normative text. Consult a licensed copy of the standard.
+text_policy: identifiers_with_paraphrased_labels
+kind: certifiable_management_system
+groups:
+- id: C
+  title: ISMS requirements (clauses 4-10)
+  parent: ''
+- id: C.4
+  title: Context of the organisation
+  parent: C
+- id: C.5
+  title: Leadership
+  parent: C
+- id: C.6
+  title: Planning
+  parent: C
+- id: C.7
+  title: Support
+  parent: C
+- id: C.8
+  title: Operation
+  parent: C
+- id: C.9
+  title: Performance evaluation
+  parent: C
+- id: C.10
+  title: Improvement
+  parent: C
+- id: A
+  title: Annex A reference controls
+  parent: ''
+- id: A.5
+  title: Organisational controls
+  parent: A
+- id: A.6
+  title: People controls
+  parent: A
+- id: A.7
+  title: Physical controls
+  parent: A
+- id: A.8
+  title: Technological controls
+  parent: A
+requirements:
+- id: C.4.1
+  title: Understanding the organisation and its context
+  group: C.4
+- id: C.4.2
+  title: Needs and expectations of interested parties
+  group: C.4
+- id: C.4.3
+  title: ISMS scope
+  group: C.4
+- id: C.4.4
+  title: Establishing and maintaining the ISMS
+  group: C.4
+- id: C.5.1
+  title: Leadership and commitment
+  group: C.5
+- id: C.5.2
+  title: Information security policy
+  group: C.5
+- id: C.5.3
+  title: Organisational roles, responsibilities and authorities
+  group: C.5
+- id: C.6.1.1
+  title: Actions to address risks and opportunities (general)
+  group: C.6
+- id: C.6.1.2
+  title: Information security risk assessment process
+  group: C.6
+- id: C.6.1.3
+  title: Information security risk treatment process, SoA and risk-owner approval
+  group: C.6
+- id: C.6.2
+  title: Information security objectives and planning
+  group: C.6
+- id: C.6.3
+  title: Planning of changes to the ISMS
+  group: C.6
+- id: C.7.1
+  title: Resources
+  group: C.7
+- id: C.7.2
+  title: Competence
+  group: C.7
+- id: C.7.3
+  title: Awareness
+  group: C.7
+- id: C.7.4
+  title: Communication
+  group: C.7
+- id: C.7.5
+  title: Documented information
+  group: C.7
+- id: C.8.1
+  title: Operational planning and control
+  group: C.8
+- id: C.8.2
+  title: Performing risk assessments at planned intervals
+  group: C.8
+- id: C.8.3
+  title: Implementing the risk treatment plan
+  group: C.8
+- id: C.9.1
+  title: Monitoring, measurement, analysis and evaluation
+  group: C.9
+- id: C.9.2
+  title: Internal audit
+  group: C.9
+- id: C.9.3
+  title: Management review
+  group: C.9
+- id: C.10.1
+  title: Continual improvement
+  group: C.10
+- id: C.10.2
+  title: Nonconformity and corrective action
+  group: C.10
+- id: A.5.1
+  title: Information security policy framework
+  group: A.5
+- id: A.5.2
+  title: Security roles and responsibilities
+  group: A.5
+- id: A.5.3
+  title: Separation of conflicting duties
+  group: A.5
+- id: A.5.4
+  title: Management direction and support for security
+  group: A.5
+- id: A.5.5
+  title: Relationships with authorities
+  group: A.5
+- id: A.5.6
+  title: Engagement with security interest groups
+  group: A.5
+- id: A.5.7
+  title: Threat intelligence gathering and analysis
+  group: A.5
+- id: A.5.8
+  title: Security in project management
+  group: A.5
+- id: A.5.9
+  title: Asset inventory
+  group: A.5
+- id: A.5.10
+  title: Rules for acceptable asset use
+  group: A.5
+- id: A.5.11
+  title: Asset return on exit
+  group: A.5
+- id: A.5.12
+  title: Information classification scheme
+  group: A.5
+- id: A.5.13
+  title: Information labelling
+  group: A.5
+- id: A.5.14
+  title: Secure information transfer
+  group: A.5
+- id: A.5.15
+  title: Access control rules
+  group: A.5
+- id: A.5.16
+  title: Identity lifecycle management
+  group: A.5
+- id: A.5.17
+  title: Management of authentication secrets
+  group: A.5
+- id: A.5.18
+  title: Provisioning and review of access rights
+  group: A.5
+- id: A.5.19
+  title: Supplier security requirements
+  group: A.5
+- id: A.5.20
+  title: Security clauses in supplier contracts
+  group: A.5
+- id: A.5.21
+  title: ICT supply-chain security
+  group: A.5
+- id: A.5.22
+  title: Supplier service monitoring and change
+  group: A.5
+- id: A.5.23
+  title: Cloud service security
+  group: A.5
+- id: A.5.24
+  title: Incident management planning
+  group: A.5
+- id: A.5.25
+  title: Security event triage and classification
+  group: A.5
+- id: A.5.26
+  title: Incident response
+  group: A.5
+- id: A.5.27
+  title: Lessons learned from incidents
+  group: A.5
+- id: A.5.28
+  title: Evidence collection and preservation
+  group: A.5
+- id: A.5.29
+  title: Security during disruption
+  group: A.5
+- id: A.5.30
+  title: ICT continuity readiness
+  group: A.5
+- id: A.5.31
+  title: Identification of legal, regulatory and contractual obligations
+  group: A.5
+- id: A.5.32
+  title: Intellectual property protection
+  group: A.5
+- id: A.5.33
+  title: Records protection
+  group: A.5
+- id: A.5.34
+  title: Privacy and personal data protection
+  group: A.5
+- id: A.5.35
+  title: Independent security review
+  group: A.5
+- id: A.5.36
+  title: Compliance with security policies and standards
+  group: A.5
+- id: A.5.37
+  title: Documented operating procedures
+  group: A.5
+- id: A.6.1
+  title: Pre-employment background screening
+  group: A.6
+- id: A.6.2
+  title: Security obligations in employment terms
+  group: A.6
+- id: A.6.3
+  title: Security awareness and training
+  group: A.6
+- id: A.6.4
+  title: Disciplinary process for violations
+  group: A.6
+- id: A.6.5
+  title: Security duties after exit or role change
+  group: A.6
+- id: A.6.6
+  title: Confidentiality agreements
+  group: A.6
+- id: A.6.7
+  title: Remote working security
+  group: A.6
+- id: A.6.8
+  title: Security event reporting by staff
+  group: A.6
+- id: A.7.1
+  title: Physical perimeters
+  group: A.7
+- id: A.7.2
+  title: Physical entry controls
+  group: A.7
+- id: A.7.3
+  title: Securing offices and facilities
+  group: A.7
+- id: A.7.4
+  title: Physical security monitoring
+  group: A.7
+- id: A.7.5
+  title: Protection from physical and environmental threats
+  group: A.7
+- id: A.7.6
+  title: Rules for secure areas
+  group: A.7
+- id: A.7.7
+  title: Clear desk and clear screen
+  group: A.7
+- id: A.7.8
+  title: Equipment siting and protection
+  group: A.7
+- id: A.7.9
+  title: Off-site asset security
+  group: A.7
+- id: A.7.10
+  title: Storage media handling
+  group: A.7
+- id: A.7.11
+  title: Supporting utilities
+  group: A.7
+- id: A.7.12
+  title: Cabling protection
+  group: A.7
+- id: A.7.13
+  title: Equipment maintenance
+  group: A.7
+- id: A.7.14
+  title: Secure disposal and re-use of equipment
+  group: A.7
+- id: A.8.1
+  title: Endpoint device security
+  group: A.8
+- id: A.8.2
+  title: Privileged access management
+  group: A.8
+- id: A.8.3
+  title: Restriction of information access
+  group: A.8
+- id: A.8.4
+  title: Source code access
+  group: A.8
+- id: A.8.5
+  title: Secure authentication mechanisms
+  group: A.8
+- id: A.8.6
+  title: Capacity management
+  group: A.8
+- id: A.8.7
+  title: Malware protection
+  group: A.8
+- id: A.8.8
+  title: Technical vulnerability management
+  group: A.8
+- id: A.8.9
+  title: Secure configuration management
+  group: A.8
+- id: A.8.10
+  title: Information deletion
+  group: A.8
+- id: A.8.11
+  title: Data masking
+  group: A.8
+- id: A.8.12
+  title: Data leakage prevention
+  group: A.8
+- id: A.8.13
+  title: Backup of information
+  group: A.8
+- id: A.8.14
+  title: Redundancy of processing facilities
+  group: A.8
+- id: A.8.15
+  title: Event logging
+  group: A.8
+- id: A.8.16
+  title: Security monitoring of networks and systems
+  group: A.8
+- id: A.8.17
+  title: Time synchronisation
+  group: A.8
+- id: A.8.18
+  title: Control of privileged utilities
+  group: A.8
+- id: A.8.19
+  title: Software installation on production systems
+  group: A.8
+- id: A.8.20
+  title: Network security
+  group: A.8
+- id: A.8.21
+  title: Security of network services
+  group: A.8
+- id: A.8.22
+  title: Network segregation
+  group: A.8
+- id: A.8.23
+  title: Web filtering
+  group: A.8
+- id: A.8.24
+  title: Cryptography
+  group: A.8
+- id: A.8.25
+  title: Secure development lifecycle
+  group: A.8
+- id: A.8.26
+  title: Application security requirements
+  group: A.8
+- id: A.8.27
+  title: Secure architecture and engineering principles
+  group: A.8
+- id: A.8.28
+  title: Secure coding
+  group: A.8
+- id: A.8.29
+  title: Security testing in development and acceptance
+  group: A.8
+- id: A.8.30
+  title: Oversight of outsourced development
+  group: A.8
+- id: A.8.31
+  title: Separation of development, test and production
+  group: A.8
+- id: A.8.32
+  title: Change management
+  group: A.8
+- id: A.8.33
+  title: Protection of test data
+  group: A.8
+- id: A.8.34
+  title: Protecting systems during audit testing
+  group: A.8

@@ -1,0 +1,135 @@
+# Evidence METADATA. Artefacts live in the (fictional) DMS; digests are synthetic.
+- id: EV-001
+  title: MFA conditional-access policy export
+  type: configuration_export
+  collected_on: '2026-07-15'
+  collected_by: IAM Engineer
+  uri: dms://halcyon/grc/evidence/EV-001
+  sha256: a151c121bf403228cf2db6892ee617ffa9abc4534f8997e1d24f4e0c3899e4a1
+  description: Exported policy set showing MFA enforcement for all interactive and remote sign-ins.
+  valid_until: '2027-01-15'
+- id: EV-002
+  title: Privileged access review records Q1-Q2 2026
+  type: report
+  collected_on: '2026-07-05'
+  collected_by: IT Security Analyst
+  uri: dms://halcyon/grc/evidence/EV-002
+  sha256: 2ee1b86960e9e08959f9c63366512f38483e718a0e6c126a3c787f45bd0ffd9e
+  description: Signed review sheets for privileged groups; exceptions logged.
+  valid_until: '2027-01-05'
+- id: EV-003
+  title: Backup restore test reports 2026
+  type: test_result
+  collected_on: '2026-08-20'
+  collected_by: Infrastructure Lead
+  uri: dms://halcyon/grc/evidence/EV-003
+  sha256: 76ddf06d614d1ea177b399577a95d39af01ae95040bfd0f1b8aedf3b6e45938f
+  description: Quarterly restore tests of WMS and ERP from immutable backups.
+  valid_until: '2027-02-20'
+- id: EV-004
+  title: Phishing simulation report Q2 2026
+  type: report
+  collected_on: '2026-06-30'
+  collected_by: Security Awareness Lead
+  uri: dms://halcyon/grc/evidence/EV-004
+  sha256: 3da6bd2b04b7bb5dfb1b236982aeb01005e1b70b51e510a2bb4c4831f81ea2ea
+  description: 480 recipients, 23 credential submissions (4.8%).
+  valid_until: '2026-12-31'
+- id: EV-005
+  title: Payroll provider SOC 2 Type II report
+  type: third_party_attestation
+  collected_on: '2026-03-31'
+  collected_by: Vendor Risk Manager
+  uri: dms://halcyon/grc/evidence/EV-005
+  sha256: 363ce4cac6d1bf6a2cefb32b8edfdef030763c5f33cf055fe82da362dbc5c325
+  description: Independent service auditor's report, period 2025-01-01 to 2025-12-31; no exceptions on logical access.
+  valid_until: '2027-03-31'
+- id: EV-006
+  title: CSPM guardrail policy and findings export
+  type: configuration_export
+  collected_on: '2026-08-01'
+  collected_by: Cloud Security Engineer
+  uri: dms://halcyon/grc/evidence/EV-006
+  sha256: 392f57152e202ecc7811b63732eacf7893fb3dc32170bef6c9953f03ceef5ba7
+  description: Posture-management rules including public-bucket detection and auto-remediation.
+  valid_until: '2027-02-01'
+- id: EV-007
+  title: Incident response tabletop exercise report
+  type: report
+  collected_on: '2026-04-18'
+  collected_by: CISO
+  uri: dms://halcyon/grc/evidence/EV-007
+  sha256: 1b558b5420d2f5568a03b780f31ea5597f57fd339563dc70e6994ba0e87712e5
+  description: Ransomware tabletop including NIS2 24h/72h notification decision points.
+  valid_until: '2027-04-18'
+- id: EV-008
+  title: LLM assistant red-team report
+  type: test_result
+  collected_on: '2026-08-28'
+  collected_by: AI Assurance Lead
+  uri: dms://halcyon/grc/evidence/EV-008
+  sha256: 85ab9cf1d220f7e8e7cd98545191022dd5c231cc455a9513dd97b45f8ae2399d
+  description: 200 prompt-injection attempts against production guardrails; 7 disclosed out-of-scope shipment data.
+  valid_until: '2027-02-28'
+- id: EV-009
+  title: Vulnerability SLA compliance report
+  type: report
+  collected_on: '2026-08-31'
+  collected_by: Vulnerability Manager
+  uri: dms://halcyon/grc/evidence/EV-009
+  sha256: a8e61d59b877bbc79b9cbfaf6b154fa8caf2d20a50025c0d28fc42d2f727ec9c
+  description: Critical internet-facing vulnerabilities vs. 14-day remediation SLA.
+  valid_until: '2026-11-30'
+- id: EV-010
+  title: Risk committee minutes approving risk methodology v1.0.0
+  type: document
+  collected_on: '2026-01-20'
+  collected_by: Risk Committee Secretary
+  uri: dms://halcyon/grc/evidence/EV-010
+  sha256: f41f73c403b35ad8ad9509905e3d147b2fe312b499b1ee3a3d6dd9a49395f5ac
+  description: Approval of risk criteria, appetite and acceptance authority matrix.
+- id: EV-011
+  title: EDR deployment coverage report
+  type: report
+  collected_on: '2026-08-15'
+  collected_by: SOC Lead
+  uri: dms://halcyon/grc/evidence/EV-011
+  sha256: 9e44553859f1940a3b77534c57d241bc1ad7b9ceb8a2a5ade83e76efca16f33f
+  description: 'EDR agent coverage: 100% of workstations, 70% of servers.'
+  valid_until: '2026-11-15'
+- id: EV-012
+  title: Email filtering and sandboxing configuration
+  type: configuration_export
+  collected_on: '2026-07-01'
+  collected_by: Messaging Engineer
+  uri: dms://halcyon/grc/evidence/EV-012
+  sha256: b0630fbdde5339102183614d6fa18b496095f60b2c948a7b0d4e37952052ffb6
+  description: Attachment sandboxing and URL rewriting policies.
+  valid_until: '2027-01-01'
+- id: EV-013
+  title: Disaster recovery failover test report
+  type: test_result
+  collected_on: '2025-05-10'
+  collected_by: Infrastructure Lead
+  uri: dms://halcyon/grc/evidence/EV-013
+  sha256: 133f7c3a50cb037bd766e3b31fde6cd097d616602d75cee6c6af2ada9495557b
+  description: 'Last WMS failover test (EXPIRED: annual test overdue).'
+  valid_until: '2026-05-10'
+- id: EV-014
+  title: AI system impact assessment - customer assistant
+  type: document
+  collected_on: '2026-02-14'
+  collected_by: AI Governance Lead
+  uri: dms://halcyon/grc/evidence/EV-014
+  sha256: 2a1985453d2c27ec25c3d63cda568dea6b63c1515a5b683fac4c792295d60853
+  description: Pre-deployment assessment of purpose, data, affected persons and risks.
+  valid_until: '2027-02-14'
+- id: EV-015
+  title: Incident notification log 2025-2026
+  type: log_extract
+  collected_on: '2026-08-31'
+  collected_by: Legal Counsel
+  uri: dms://halcyon/grc/evidence/EV-015
+  sha256: 9130856609d1890464a35634519c0f9653ec075134b631d2375adbedbf2d36a2
+  description: Six notifiable incidents with timestamps of detection and authority notification.
+  valid_until: '2027-02-28'

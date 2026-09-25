@@ -121,6 +121,7 @@ class Evaluation(BaseModel):
     decision_level: str
     ale_threshold: float
     ale_within_threshold: bool
+    prob_ale_within_threshold: float
     max_acceptable_level: str
     level_within_appetite: bool
     within_appetite: bool
@@ -344,25 +345,34 @@ def run_assessment(
                 )
 
     s = states[CURRENT].stats
-    ale_ok = s.ale <= methodology.appetite.scenario_ale_threshold
+    threshold = methodology.appetite.scenario_ale_threshold
+    ale_ok = s.ale <= threshold
     level_ok = methodology.within_appetite(quant_level)
     rule = methodology.acceptance_rule(quant_level)
+    authority = rule.min_authority
+    if not (ale_ok and level_ok):
+        escalate = methodology.appetite.outside_appetite_authority
+        authority = max(authority, escalate, key=lambda r: r.authority_rank)
+    # Epistemic probability that the true expected annual loss is within the threshold.
+    prob_within = float((run.states[CURRENT].expected_loss <= threshold).mean())
     evaluation = Evaluation(
         quantitative_level=quant_level,
         qualitative_level=qual_level,
         decision_level=quant_level,
-        ale_threshold=methodology.appetite.scenario_ale_threshold,
+        ale_threshold=threshold,
         ale_within_threshold=ale_ok,
+        prob_ale_within_threshold=prob_within,
         max_acceptable_level=methodology.appetite.max_acceptable_level,
         level_within_appetite=level_ok,
         within_appetite=ale_ok and level_ok,
         treatment_required=not (ale_ok and level_ok),
-        acceptance_authority=rule.min_authority,
+        acceptance_authority=authority,
         max_acceptance_days=rule.max_acceptance_days,
         review_every_days=rule.review_every_days,
         rationale=(
-            "The quantitative result is the decision basis (see methodology notes). The qualitative rating is "
-            "retained for communication and consistency checking."
+            "The quantitative result is the decision basis (see methodology notes); the qualitative rating is "
+            "retained for communication and consistency checking. Retaining a risk outside appetite requires "
+            f"the '{methodology.appetite.outside_appetite_authority.value}' authority."
         ),
     )
 

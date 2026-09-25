@@ -69,6 +69,7 @@ class ControlAssessment(BaseModel):
     deviation_upper_bound_bayes: float
     deviation_upper_bound_clopper_pearson: float | None
     conclusion: OperatingConclusion
+    conclusion_basis: str  # "statistical" or "judgemental (frequency-based)"
     additional_samples_needed: int | None
     explanation: str
 
@@ -131,8 +132,26 @@ def assess_control(control: Control, policy: ControlTestingPolicy, as_of: date) 
         p_within, conclusion = _conclude(post, policy)
         cp_upper = clopper_pearson_upper(k, n, policy.required_confidence)
 
+    # Low-frequency controls (annual, quarterly, ...) cannot yield statistical samples. Audit
+    # practice then tests a small judgemental sample: any exception is a deficiency. The
+    # *conclusion* follows that convention, but the *quantitative model* still uses the Beta
+    # posterior, which keeps the uncertainty of a 2-sample test visible in the risk estimate.
+    basis = "statistical"
+    min_n = policy.judgemental_min_samples.get(control.frequency.value)
+    if min_n is not None and n > 0:
+        basis = "judgemental (frequency-based)"
+        if k > 0:
+            conclusion = OperatingConclusion.NOT_EFFECTIVE
+        elif n >= min_n:
+            conclusion = OperatingConclusion.EFFECTIVE
+        else:
+            conclusion = OperatingConclusion.INCONCLUSIVE
+
     extra = None
-    if conclusion in (OperatingConclusion.INCONCLUSIVE, OperatingConclusion.NOT_TESTED):
+    if basis == "statistical" and conclusion in (
+        OperatingConclusion.INCONCLUSIVE,
+        OperatingConclusion.NOT_TESTED,
+    ):
         extra = _samples_to_conclude(n, k, policy)
 
     tdr = policy.tolerable_deviation_rate
@@ -142,6 +161,13 @@ def assess_control(control: Control, policy: ControlTestingPolicy, as_of: date) 
             f"No operating-effectiveness tests in the last {policy.lookback_days} days. "
             f"The model uses the uninformative prior (mean operating rate {post.mean:.0%}). "
             f"{extra} exception-free samples would support an 'effective' conclusion."
+        )
+    elif basis != "statistical":
+        text = (
+            f"{control.frequency.value.capitalize()} control: {k} exception(s) in {n} samples "
+            f"(audit convention: at least {min_n} samples and no exceptions). "
+            f"Conclusion: {conclusion.value.replace('_', ' ')}. The risk model still uses the posterior "
+            f"operating rate (mean {post.mean:.0%}), which reflects how little a small sample proves."
         )
     else:
         text = (
@@ -171,6 +197,7 @@ def assess_control(control: Control, policy: ControlTestingPolicy, as_of: date) 
         deviation_upper_bound_bayes=dev_upper,
         deviation_upper_bound_clopper_pearson=cp_upper,
         conclusion=conclusion,
+        conclusion_basis=basis,
         additional_samples_needed=extra,
         explanation=text,
     )

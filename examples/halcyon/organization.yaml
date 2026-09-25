@@ -1,0 +1,12 @@
+# FICTIONAL organisation used to demonstrate Sextant. All names, figures and
+# events are synthetic and illustrative. They are not benchmarks.
+name: Halcyon Logistics S.A. (fictional)
+description: >-
+  Mid-sized EU freight-forwarding and contract-logistics company. About 1,100
+  employees, 14 warehouses, a customer shipment-tracking portal, and a new
+  LLM-based customer-service assistant. Assumed to fall within NIS2 scope
+  (transport sector) and GDPR.
+sector: Transport and logistics
+jurisdiction: EU member state (illustrative)
+annual_revenue: 240000000
+fictional: true

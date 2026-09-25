@@ -1,0 +1,72 @@
+id: RSK-005
+title: Departing employee exfiltrates customer and pricing data
+description: >-
+  A sales employee who is leaving for a competitor exports customer lists and
+  pricing agreements through personal email, USB or personal cloud storage.
+category: data_leakage
+owner: Chief Commercial Officer
+assets: [AST-CUSTDATA, AST-ERP]
+threat:
+  source_type: adversarial
+  source: Departing employee (malicious insider)
+  event: Bulk export of customer and pricing data
+vulnerabilities:
+  - Broad CRM export permissions for sales staff
+  - Personal cloud uploads not covered by DLP
+properties: [confidentiality]
+
+threat_event_frequency:
+  dist: lognormal
+  low: 0.5
+  high: 5
+  source: HR leaver analysis and two legal cases (2022, 2025)
+  rationale: Attempts per year by leavers to take commercially sensitive data.
+susceptibility: {dist: pert, min: 0.2, mode: 0.5, max: 0.8, rationale: Probability an attempt succeeds without the linked controls.}
+primary_losses:
+  - name: lost_contracts
+    form: competitive_advantage
+    magnitude: {dist: lognormal, low: 50000, high: 1500000}
+  - name: investigation_and_legal
+    form: response
+    magnitude: {dist: pert, min: 10000, mode: 30000, max: 100000}
+secondary_loss:
+  probability: {dist: pert, min: 0.05, mode: 0.15, max: 0.35}
+  components:
+    - name: gdpr_sanction
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 20000, high: 500000}
+
+controls:
+  - control_id: CTL-DLP-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.3, mode: 0.5, max: 0.7}
+    rationale: DLP blocks bulk transfers through email and USB; personal cloud uploads are only partly covered.
+  - control_id: CTL-IAM-02
+    target: primary_loss
+    reduction: {dist: pert, min: 0.05, mode: 0.15, max: 0.3}
+    rationale: Access reviews remove excess CRM export rights and limit the volume that can be taken.
+
+treatments:
+  - id: T1
+    title: Test DLP operation and extend it to personal cloud uploads
+    type: modify
+    description: Run quarterly DLP operating tests and add cloud-upload inspection.
+    change_controls:
+      - control_id: CTL-DLP-01
+        operating_rate: {dist: pert, min: 0.8, mode: 0.9, max: 0.97}
+        rationale: Target operating rate once tuned and tested quarterly.
+    annual_cost: 25000
+selected_treatment: T1
+
+qualitative:
+  inherent:
+    likelihood: {level: 3, rationale: "Leaver-related data theft is seen every few years."}
+    impact:
+      financial: {level: 3, rationale: "Loss of a few key accounts."}
+      legal_regulatory: {level: 3, rationale: "Personal data of business contacts; notifiable."}
+  current:
+    likelihood: {level: 2, rationale: "DLP is in place (not yet tested)."}
+    impact:
+      financial: {level: 3, rationale: "Unchanged."}
+      legal_regulatory: {level: 3, rationale: "Unchanged."}
+references: ["nist_csf_2_0:PR.DS-01"]

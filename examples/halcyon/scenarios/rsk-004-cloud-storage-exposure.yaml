@@ -1,0 +1,64 @@
+id: RSK-004
+title: Misconfigured cloud storage exposes customs documents
+description: >-
+  An engineer makes an object-storage bucket with customs documents and proofs
+  of delivery publicly readable, and a third party discovers and downloads it.
+category: cloud_misconfiguration
+owner: Head of IT Infrastructure
+assets: [AST-CLOUD, AST-CUSTDATA]
+threat:
+  source_type: accidental
+  source: Cloud engineers (configuration error)
+  event: Storage bucket with personal data made publicly readable
+vulnerabilities:
+  - Public access can be enabled per bucket
+  - Infrastructure-as-code review not mandatory for storage policies
+properties: [confidentiality]
+
+threat_event_frequency:
+  dist: gamma_from_events
+  events: 5
+  exposure_years: 2.5
+  source: CSPM finding history 2024-2026 (EV-006)
+  rationale: Buckets made public by mistake, whether or not they were detected. The Jeffreys prior lets the data dominate.
+susceptibility:
+  dist: pert
+  min: 0.05
+  mode: 0.15
+  max: 0.4
+  rationale: Probability that a public bucket is found and downloaded before it is closed, if there were no detection.
+primary_losses:
+  - name: investigation_and_notification
+    form: response
+    magnitude: {dist: lognormal, low: 20000, high: 300000}
+secondary_loss:
+  probability: {dist: pert, min: 0.4, mode: 0.6, max: 0.85, rationale: Personal data exposure is notifiable; regulators and customers react.}
+  components:
+    - name: regulatory_sanction
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 100000, high: 4000000}
+    - name: customer_trust
+      form: reputation
+      magnitude: {dist: lognormal, low: 100000, high: 2000000}
+
+controls:
+  - control_id: CTL-CSPM-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.6, mode: 0.8, max: 0.95}
+    rationale: Auto-remediation closes exposure within minutes to hours, shrinking the discovery window.
+
+treatments:
+  - id: T1
+    title: Organisation-level guardrail blocking public storage
+    type: modify
+    description: Deploy CTL-CSPM-02 so public access cannot be enabled in the first place.
+    add_controls:
+      - control_id: CTL-CSPM-02
+        target: threat_event_frequency
+        reduction: {dist: pert, min: 0.8, mode: 0.95, max: 0.99}
+        operating_rate: {dist: pert, min: 0.95, mode: 0.99, max: 0.999}
+        rationale: A preventive deny policy removes the misconfiguration class; exceptions need an approved break-glass process.
+    one_time_cost: 15000
+    annual_cost: 5000
+selected_treatment: T1
+references: ["nist_csf_2_0:PR.PS-01"]

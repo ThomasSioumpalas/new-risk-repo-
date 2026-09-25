@@ -94,6 +94,10 @@ class Appetite(_Frozen):
         gt=0, description="Expected annual loss above which a single scenario is outside appetite."
     )
     max_acceptable_level: str = Field(description="Highest risk level acceptable without treatment.")
+    outside_appetite_authority: Role = Field(
+        default=Role.EXECUTIVE,
+        description="Minimum authority to retain a risk that is outside appetite, whatever its level.",
+    )
     tolerance_curve: list[TolerancePoint] = Field(min_length=1)
 
 
@@ -117,6 +121,13 @@ class ControlTestingPolicy(_Frozen):
     lookback_days: int = Field(default=365, gt=0)
     prior_alpha: float = Field(default=1.0, gt=0, description="Prior on the operating rate.")
     prior_beta: float = Field(default=1.0, gt=0)
+    judgemental_min_samples: dict[str, int] = Field(
+        default_factory=lambda: {"annual": 1, "quarterly": 2, "monthly": 2, "weekly": 5},
+        description=(
+            "Low-frequency controls cannot yield statistical samples. For these frequencies the audit "
+            "convention applies: at least N samples and zero exceptions gives 'effective'."
+        ),
+    )
 
 
 class Methodology(_Frozen):

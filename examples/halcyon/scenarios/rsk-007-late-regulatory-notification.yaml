@@ -1,0 +1,75 @@
+id: RSK-007
+title: Late or deficient regulatory incident notification
+description: >-
+  A significant incident is notified to the CSIRT or competent authority (NIS2
+  Art. 23) or to the data protection authority (GDPR Art. 33) late or with
+  deficient content, which leads to a sanction.
+category: regulatory_compliance
+owner: General Counsel
+assets: [AST-OPS]
+threat:
+  source_type: accidental
+  source: Internal incident handling
+  event: Missed 24h / 72h notification deadline or incomplete notification
+vulnerabilities:
+  - Manual deadline tracking
+  - Legal and security teams in different time zones
+properties: [integrity]
+
+threat_event_frequency:
+  dist: gamma_from_events
+  events: 6
+  exposure_years: 1.67
+  source: Incident notification log 2025-2026 (EV-015)
+  rationale: Notifiable incidents per year (each one is an opportunity to notify late).
+susceptibility:
+  dist: pert
+  min: 0.2
+  mode: 0.4
+  max: 0.7
+  rationale: Probability of a late or deficient notification without a playbook.
+primary_losses:
+  - name: legal_and_remediation
+    form: response
+    magnitude: {dist: pert, min: 10000, mode: 40000, max: 150000}
+secondary_loss:
+  probability:
+    dist: pert
+    min: 0.05
+    mode: 0.15
+    max: 0.35
+    rationale: Probability that the authority imposes a sanction for a late notification.
+  components:
+    - name: administrative_fine
+      form: fines_judgments
+      magnitude:
+        dist: lognormal
+        low: 50000
+        high: 2000000
+        cap: 7000000
+        rationale: Capped at the NIS2 maximum for important entities (EUR 7M or 1.4% of turnover, whichever is higher).
+    - name: regulator_scrutiny
+      form: reputation
+      magnitude: {dist: lognormal, low: 20000, high: 300000}
+
+controls:
+  - control_id: CTL-IR-01
+    target: susceptibility
+    reduction: {dist: pert, min: 0.5, mode: 0.75, max: 0.9}
+    rationale: The playbook defines roles, templates and clocks for the 24h / 72h / 1-month notifications.
+
+treatments:
+  - id: T1
+    title: Automated notification workflow and quarterly drills
+    type: modify
+    description: Workflow tooling with deadline alarms and pre-approved templates, plus quarterly notification drills.
+    change_controls:
+      - control_id: CTL-IR-01
+        operating_rate: {dist: pert, min: 0.9, mode: 0.97, max: 0.995}
+        rationale: Automated clocks remove the main failure mode seen in the log (a manual hand-off).
+    one_time_cost: 30000
+    annual_cost: 20000
+selected_treatment: T1
+assumptions:
+  - Only six notifications are available to test the control, so its operating rate stays uncertain; this is reported as an inconclusive test.
+references: ["nis2_2022_2555:23.4", "nist_csf_2_0:RS.CO-02"]

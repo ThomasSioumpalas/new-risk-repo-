@@ -1,0 +1,316 @@
+# Internal control library ("common controls"): each control is tested once and
+# mapped to many frameworks. Mapping relationships follow NIST IR 8477 and are
+# read as "the CONTROL is <relationship> the REQUIREMENT".
+# Test results are synthetic and chosen to show every conclusion type.
+
+- id: CTL-IAM-01
+  name: MFA for remote, cloud and privileged access
+  description: Conditional-access policy enforces MFA for all interactive sign-ins to SSO, VPN and admin portals.
+  type: preventive
+  owner: Head of IT Infrastructure
+  status: implemented
+  frequency: continuous
+  evidence: [EV-001]
+  tests:
+    - {id: T-IAM01-2026, kind: operating, performed_on: 2026-07-15, performed_by: Internal Audit, procedure: "Re-performance on 40 randomly sampled sign-ins", samples: 40, exceptions: 0, evidence: [EV-001]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.5, relationship: subset_of}
+    - {framework: nist_csf_2_0, requirement: PR.AA-03, relationship: subset_of}
+    - {framework: nis2_2022_2555, requirement: 21.2.j, relationship: subset_of, rationale: "Covers MFA; not secured voice/video or emergency communications."}
+
+- id: CTL-IAM-02
+  name: Quarterly privileged access review
+  description: Owners of privileged groups recertify membership each quarter; leavers and role changes are removed.
+  type: detective
+  owner: IT Security Manager
+  status: implemented
+  frequency: quarterly
+  evidence: [EV-002]
+  tests:
+    - {id: T-IAM02-2026, kind: operating, performed_on: 2026-07-05, performed_by: Internal Audit, procedure: "Inspection of 25 sampled privileged accounts against review records", samples: 25, exceptions: 1, evidence: [EV-002]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.5.18, relationship: subset_of}
+    - {framework: iso27001_2022, requirement: A.8.2, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: PR.AA-05, relationship: subset_of}
+    - {framework: nis2_2022_2555, requirement: 21.2.i, relationship: intersects_with}
+
+- id: CTL-EML-01
+  name: Email filtering and attachment sandboxing
+  description: Inbound email is scanned, attachments detonated in a sandbox and URLs rewritten and checked at click time.
+  type: preventive
+  owner: Messaging Engineer
+  status: implemented
+  frequency: continuous
+  evidence: [EV-012]
+  tests:
+    - {id: T-EML01-2026, kind: operating, performed_on: 2026-07-01, performed_by: IT Security Analyst, procedure: "30 sampled malicious test messages", samples: 30, exceptions: 0, evidence: [EV-012]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.7, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: DE.CM-09, relationship: intersects_with}
+
+- id: CTL-AWR-01
+  name: Security awareness programme with phishing simulations
+  description: Annual training for all staff and quarterly phishing simulations with targeted follow-up.
+  type: preventive
+  owner: Security Awareness Lead
+  status: implemented
+  frequency: quarterly
+  evidence: [EV-004]
+  tests:
+    - {id: T-AWR01-D, kind: design, performed_on: 2026-06-30, performed_by: Internal Audit, procedure: "Walkthrough of programme design and completion tracking", design_conclusion: effective, evidence: [EV-004]}
+    - {id: T-AWR01-O, kind: operating, performed_on: 2026-06-30, performed_by: Internal Audit, procedure: "Inspection of two quarterly simulation campaigns and follow-up training", samples: 2, exceptions: 0, evidence: [EV-004]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.6.3, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: PR.AT-01, relationship: equal}
+    - {framework: nis2_2022_2555, requirement: 21.2.g, relationship: subset_of}
+
+- id: CTL-EDR-01
+  name: Endpoint detection and response
+  description: EDR agent with automated containment; deployed on all workstations and 70% of servers.
+  type: detective
+  owner: SOC Lead
+  status: partially_implemented
+  frequency: continuous
+  evidence: [EV-011]
+  tests:
+    - {id: T-EDR01-2026, kind: operating, performed_on: 2026-08-15, performed_by: SOC Lead, procedure: "30 simulated malicious behaviours on covered hosts", samples: 30, exceptions: 0, evidence: [EV-011]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.7, relationship: intersects_with}
+    - {framework: iso27001_2022, requirement: A.8.16, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: DE.CM-09, relationship: subset_of}
+
+- id: CTL-BKP-01
+  name: Immutable backups with restore testing
+  description: Daily immutable (object-lock) backups of WMS and ERP, restore-tested each quarter.
+  type: corrective
+  owner: Infrastructure Lead
+  status: implemented
+  frequency: quarterly
+  evidence: [EV-003]
+  tests:
+    - {id: T-BKP01-2026, kind: operating, performed_on: 2026-08-20, performed_by: Infrastructure Lead, procedure: "12 restore tests across systems", samples: 12, exceptions: 1, evidence: [EV-003], notes: "One ERP restore exceeded the 24h RTO."}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.13, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: PR.DS-11, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: RC.RP-03, relationship: intersects_with}
+    - {framework: nis2_2022_2555, requirement: 21.2.c, relationship: subset_of}
+
+- id: CTL-SEG-01
+  name: Segmentation of warehouse and ERP networks
+  description: Micro-segmentation separating warehouse, office and server zones to limit lateral movement.
+  type: preventive
+  owner: Network Lead
+  status: planned
+  frequency: continuous
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.22, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: PR.IR-01, relationship: subset_of}
+
+- id: CTL-VUL-01
+  name: Vulnerability management with 14-day SLA for critical exposures
+  description: Authenticated scanning; critical internet-facing vulnerabilities remediated within 14 days.
+  type: preventive
+  owner: Vulnerability Manager
+  status: implemented
+  frequency: event_driven
+  evidence: [EV-009]
+  tests:
+    - {id: T-VUL01-2026, kind: operating, performed_on: 2026-08-31, performed_by: Internal Audit, procedure: "30 sampled critical findings checked against SLA", samples: 30, exceptions: 6, evidence: [EV-009], notes: "Six findings exceeded the SLA (legacy WMS appliances)."}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.8, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: ID.RA-01, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: PR.PS-02, relationship: intersects_with}
+    - {framework: nis2_2022_2555, requirement: 21.2.e, relationship: subset_of}
+
+- id: CTL-CSPM-01
+  name: Cloud security posture management with auto-remediation
+  description: Continuous posture checks; public object-storage exposure is detected and reverted automatically.
+  type: detective
+  owner: Cloud Security Engineer
+  status: implemented
+  frequency: continuous
+  evidence: [EV-006]
+  tests:
+    - {id: T-CSPM01-2026, kind: operating, performed_on: 2026-08-01, performed_by: Cloud Security Engineer, procedure: "25 injected test misconfigurations", samples: 25, exceptions: 0, evidence: [EV-006]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.5.23, relationship: intersects_with}
+    - {framework: iso27001_2022, requirement: A.8.9, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: PR.PS-01, relationship: intersects_with}
+
+- id: CTL-CSPM-02
+  name: Organisation-level guardrail blocking public storage
+  description: Preventive policy at the cloud-organisation level that denies public access settings on all storage.
+  type: preventive
+  owner: Cloud Security Engineer
+  status: planned
+  frequency: continuous
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.9, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: PR.DS-01, relationship: intersects_with}
+
+- id: CTL-DLP-01
+  name: Data loss prevention for email and endpoints
+  description: DLP rules on outbound email, cloud uploads and removable media for customer data patterns.
+  type: preventive
+  owner: IT Security Manager
+  status: implemented
+  frequency: continuous
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.12, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: PR.DS-01, relationship: intersects_with}
+
+- id: CTL-TPR-01
+  name: Third-party security due diligence and contract clauses
+  description: Risk-tiered vendor assessments, SOC 2 / ISO 27001 evidence review and standard security clauses.
+  type: preventive
+  owner: Vendor Risk Manager
+  status: implemented
+  frequency: event_driven
+  evidence: [EV-005]
+  tests:
+    - {id: T-TPR01-D, kind: design, performed_on: 2026-03-31, performed_by: Internal Audit, procedure: "Walkthrough of onboarding workflow", design_conclusion: effective}
+    - {id: T-TPR01-O, kind: operating, performed_on: 2026-04-15, performed_by: Internal Audit, procedure: "20 sampled high-risk vendor files", samples: 20, exceptions: 0, evidence: [EV-005]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.5.19, relationship: equal}
+    - {framework: iso27001_2022, requirement: A.5.20, relationship: equal}
+    - {framework: iso27001_2022, requirement: A.5.21, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: GV.SC-05, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: GV.SC-06, relationship: equal}
+    - {framework: nis2_2022_2555, requirement: 21.2.d, relationship: subset_of}
+
+- id: CTL-IR-01
+  name: Incident response and regulatory notification playbook
+  description: Incident classification, escalation and a 24h / 72h / 1-month notification workflow (NIS2 Art. 23, GDPR Art. 33).
+  type: corrective
+  owner: CISO
+  status: implemented
+  frequency: event_driven
+  evidence: [EV-007, EV-015]
+  tests:
+    - {id: T-IR01-D, kind: design, performed_on: 2026-04-18, performed_by: Internal Audit, procedure: "Tabletop exercise review", design_conclusion: effective, evidence: [EV-007]}
+    - {id: T-IR01-O, kind: operating, performed_on: 2026-08-31, performed_by: Legal Counsel, procedure: "All 6 notifiable incidents checked for timeliness", samples: 6, exceptions: 1, evidence: [EV-015], notes: "One early warning sent after 31 hours."}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.5.24, relationship: intersects_with}
+    - {framework: iso27001_2022, requirement: A.5.26, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: RS.MA-01, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: RS.CO-02, relationship: superset_of}
+    - {framework: nis2_2022_2555, requirement: 21.2.b, relationship: equal}
+    - {framework: nis2_2022_2555, requirement: "23.4", relationship: equal}
+
+- id: CTL-DR-01
+  name: WMS disaster recovery (warm standby)
+  description: Warm standby for the WMS in a second region; covers 60% of warehouse sites.
+  type: corrective
+  owner: Infrastructure Lead
+  status: partially_implemented
+  frequency: annual
+  evidence: [EV-013]
+  tests:
+    - {id: T-DR01-D, kind: design, performed_on: 2025-05-10, performed_by: Infrastructure Lead, procedure: "Failover test", design_conclusion: effective, evidence: [EV-013]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.14, relationship: equal}
+    - {framework: iso27001_2022, requirement: A.5.30, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: PR.IR-03, relationship: subset_of}
+    - {framework: nist_csf_2_0, requirement: RC.RP-01, relationship: intersects_with}
+    - {framework: nis2_2022_2555, requirement: 21.2.c, relationship: subset_of}
+
+- id: CTL-AI-01
+  name: LLM input/output guardrails and tool-call allow-listing
+  description: Prompt-injection classifiers, output PII filtering and an allow-list of tool calls for the assistant.
+  type: preventive
+  owner: Head of Digital
+  status: implemented
+  frequency: continuous
+  evidence: [EV-008]
+  tests:
+    - {id: T-AI01-D, kind: design, performed_on: 2026-08-28, performed_by: AI Assurance Lead, procedure: "Red-team exercise (200 attempts)", design_conclusion: effective, evidence: [EV-008]}
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.26, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: MEASURE-2, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: MANAGE-1, relationship: intersects_with}
+
+- id: CTL-AI-02
+  name: Least-privilege retrieval for the LLM assistant
+  description: The assistant can only retrieve shipments bound to the authenticated customer session (authorisation enforced outside the model).
+  type: preventive
+  owner: Head of Digital
+  status: planned
+  frequency: continuous
+  mappings:
+    - {framework: iso27001_2022, requirement: A.8.3, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: MANAGE-2, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: MAP-4, relationship: intersects_with}
+
+- id: CTL-AI-03
+  name: AI system inventory and pre-deployment impact assessment
+  description: Every AI system is registered and assessed (purpose, data, affected persons, risks) before go-live.
+  type: preventive
+  owner: AI Governance Lead
+  status: implemented
+  frequency: event_driven
+  evidence: [EV-014]
+  tests:
+    - {id: T-AI03-D, kind: design, performed_on: 2026-02-14, performed_by: Internal Audit, procedure: "Review of assessment template and approval workflow", design_conclusion: effective, evidence: [EV-014]}
+  mappings:
+    - {framework: nist_ai_rmf_1_0, requirement: MAP-1, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: MAP-5, relationship: intersects_with}
+    - {framework: nist_ai_rmf_1_0, requirement: GOVERN-1, relationship: subset_of}
+
+- id: CTL-GOV-01
+  name: Approved risk methodology and annual risk assessment
+  description: The risk methodology (criteria, appetite, authority matrix) is approved by the risk committee, and risks are reassessed at least annually.
+  type: preventive
+  owner: CISO
+  status: implemented
+  frequency: annual
+  evidence: [EV-010]
+  tests:
+    - {id: T-GOV01-D, kind: design, performed_on: 2026-01-20, performed_by: Internal Audit, procedure: "Inspection of approved methodology", design_conclusion: effective, evidence: [EV-010]}
+    - {id: T-GOV01-O, kind: operating, performed_on: 2026-06-30, performed_by: Internal Audit, procedure: "Inspection of the 2026 annual risk assessment cycle", samples: 1, exceptions: 0, evidence: [EV-010]}
+  mappings:
+    - {framework: iso27001_2022, requirement: C.6.1.2, relationship: equal}
+    - {framework: iso27001_2022, requirement: C.8.2, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: GV.RM-06, relationship: equal}
+    - {framework: nist_csf_2_0, requirement: GV.RM-02, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: ID.RA-05, relationship: equal}
+    - {framework: nis2_2022_2555, requirement: 21.2.a, relationship: subset_of}
+
+- id: CTL-GOV-02
+  name: Risk treatment approval and residual-risk acceptance
+  description: Risk owners approve treatment plans; residual risk is accepted by the authority defined in the methodology, time-limited.
+  type: preventive
+  owner: CISO
+  status: implemented
+  frequency: event_driven
+  evidence: [EV-010]
+  tests:
+    - {id: T-GOV02-O, kind: operating, performed_on: 2026-06-30, performed_by: Internal Audit, procedure: "15 sampled acceptances checked for authority and expiry", samples: 15, exceptions: 0, evidence: [EV-010]}
+  mappings:
+    - {framework: iso27001_2022, requirement: C.6.1.3, relationship: intersects_with}
+    - {framework: iso27001_2022, requirement: C.8.3, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: ID.RA-06, relationship: equal}
+    - {framework: nis2_2022_2555, requirement: "20.1", relationship: intersects_with}
+
+- id: CTL-GOV-03
+  name: Internal audit of the ISMS
+  description: Risk-based internal audit programme covering the ISMS and key controls.
+  type: detective
+  owner: Head of Internal Audit
+  status: planned
+  frequency: annual
+  mappings:
+    - {framework: iso27001_2022, requirement: C.9.2, relationship: equal}
+    - {framework: iso27001_2022, requirement: A.5.35, relationship: intersects_with}
+    - {framework: nist_csf_2_0, requirement: GV.OV-03, relationship: intersects_with}
+    - {framework: nis2_2022_2555, requirement: 21.2.f, relationship: subset_of}
+
+- id: CTL-GOV-04
+  name: Cybersecurity training for the management body
+  description: Annual training for board members on cyber risk and their NIS2 oversight duties.
+  type: preventive
+  owner: Company Secretary
+  status: planned
+  frequency: annual
+  mappings:
+    - {framework: nis2_2022_2555, requirement: "20.2", relationship: equal}
+    - {framework: nist_csf_2_0, requirement: PR.AT-02, relationship: intersects_with}

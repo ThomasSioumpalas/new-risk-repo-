@@ -1,0 +1,71 @@
+id: RSK-006
+title: Prolonged warehouse management system outage
+description: >-
+  Hosting-platform or software failures make the WMS unavailable for more than
+  four hours, stopping picking and dispatch at affected warehouses.
+category: service_availability
+owner: Head of Logistics IT
+assets: [AST-WMS, AST-OPS]
+threat:
+  source_type: structural
+  source: Hosting platform and WMS software failures
+  event: WMS unavailable for more than 4 hours
+vulnerabilities:
+  - Single primary hosting region
+  - Warm standby covers only 60% of sites
+properties: [availability]
+
+threat_event_frequency:
+  dist: gamma_from_events
+  events: 7
+  exposure_years: 5
+  prior_low: 0.5
+  prior_high: 3
+  source: "data/wms_outages.csv (2021-2025) blended with an IT-operations expert prior"
+  rationale: Qualifying outages (> 4 hours) per year.
+susceptibility:
+  dist: constant
+  value: 1.0
+  rationale: By definition every qualifying outage causes loss, so the frequency is estimated at loss-event level.
+primary_losses:
+  - name: dispatch_stopped
+    form: productivity
+    magnitude: {dist: lognormal, low: 50000, high: 1200000, source: Finance BIA 2026}
+  - name: recovery_effort
+    form: response
+    magnitude: {dist: pert, min: 5000, mode: 20000, max: 80000}
+secondary_loss:
+  probability: {dist: pert, min: 0.2, mode: 0.35, max: 0.5, rationale: Share of outages that trigger contractual SLA credits.}
+  components:
+    - name: sla_credits
+      form: fines_judgments
+      magnitude: {dist: lognormal, low: 20000, high: 400000}
+
+controls:
+  - control_id: CTL-DR-01
+    target: primary_loss
+    loss_forms: [productivity]
+    reduction: {dist: pert, min: 0.4, mode: 0.6, max: 0.8}
+    coverage: 0.6
+    rationale: Failover to the warm standby cuts outage duration for the covered sites.
+
+treatments:
+  - id: T1
+    title: Active-active multi-region WMS
+    type: modify
+    description: Re-platform the WMS to run active-active across two regions for all sites, with twice-yearly failover tests.
+    change_controls:
+      - control_id: CTL-DR-01
+        coverage: 1.0
+        operating_rate: {dist: pert, min: 0.9, mode: 0.97, max: 0.99}
+        rationale: Design target after re-platforming, with regular failover testing.
+    one_time_cost: 400000
+    annual_cost: 120000
+  - id: T2
+    title: Retain and restore the annual failover test
+    type: retain
+    description: Accept the current exposure and restore the overdue failover test, so that CTL-DR-01 receives evidence-based credit.
+selected_treatment: T2
+assumptions:
+  - Outages are treated as independent events; a common cause, such as a provider-wide failure, is not modelled separately.
+references: ["nist_csf_2_0:PR.IR-03", "nis2_2022_2555:21.2.c"]

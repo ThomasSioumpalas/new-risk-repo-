@@ -1,0 +1,6 @@
+- framework: iso27001_2022
+  requirement: A.8.30
+  justification: >-
+    No software development is outsourced. All development of the portal and
+    integrations is performed by employees under the internal SDLC (see A.8.25).
+  approved_by: CISO (ISMS owner)

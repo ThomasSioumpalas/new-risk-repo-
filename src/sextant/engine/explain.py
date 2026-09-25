@@ -92,7 +92,8 @@ def explain(a: QuantitativeAssessment) -> Explanation:
         f"{now.banded.basis}. The risk matrix gives '{now.banded.risk_level}'. "
         f"The ALE of {money(s.ale, cur)} is compared with the scenario threshold of "
         f"{money(ev.ale_threshold, cur)}, and the level with the maximum acceptable level "
-        f"'{ev.max_acceptable_level}'. The risk is **{appetite} appetite**.{qual}"
+        f"'{ev.max_acceptable_level}'. The risk is **{appetite} appetite**. Given the parameter uncertainty, "
+        f"the probability that the true ALE is within the threshold is {ev.prob_ale_within_threshold:.0%}.{qual}"
     )
 
     data_inputs = [i for i in a.inputs if i.provenance in ("data", "expert_and_data")]
