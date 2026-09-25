@@ -1,0 +1,14 @@
+# Draft Statement of Applicability — ISO/IEC 27001:2022 Annex A
+
+> **DRAFT for ISMS-owner review.** This is a machine-generated starting point (ISO/IEC 27001:2022 6.1.3 d)),
+> derived from the risks and controls in this register. It is not an approved Statement of Applicability.
+> Every applicability decision and justification below must be reviewed, and inclusion or exclusion
+> confirmed, by the ISMS owner.
+
+As of {{ report.as_of.isoformat() }}. {{ soa | length }} Annex A controls.
+
+| Control ref | Topic | Applicable | Justification | Implementation status | Implementing controls | Related risks |
+|---|---|---|---|---|---|---|
+{% for e in soa %}
+| {{ e.control_ref }} | {{ e.topic }} | {{ "✅" if e.applicable else "❌ excluded" }} | {{ e.justification }} | {{ status_label(e.implementation_status.value) }} | {% if e.implementing_controls %}{{ e.implementing_controls | join(", ") }}{% else %}—{% endif %} | {% if e.related_risks %}{{ e.related_risks | join(", ") }}{% else %}—{% endif %} |
+{% endfor %}

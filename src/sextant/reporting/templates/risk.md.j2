@@ -1,0 +1,188 @@
+# {{ r.scenario_id }} — {{ r.scenario_title }}
+
+{{ r.explanation.headline }}
+
+## What is the estimated risk?
+
+{{ r.explanation.what_is_the_risk }}
+
+## Why is it at this level?
+
+{{ r.explanation.why_this_level }}
+
+## How confident are we?
+
+{{ r.explanation.how_confident }}
+
+## Which controls reduce it?
+
+{{ r.explanation.which_controls }}
+
+## What if the assumptions change?
+
+{{ r.explanation.what_if }}
+
+## What mitigation has the greatest effect?
+
+{{ r.explanation.best_mitigation }}
+
+## What assumptions were made?
+
+{% for a in r.assumptions %}
+- {{ a }}
+{% endfor %}
+
+## Risk states
+
+| State | ALE | 90% credible interval | VaR 95% | ES 95% | P(≥ 1 event) | Loss events/yr | Expected loss/event | Level (L×I) |
+|---|---|---|---|---|---|---|---|---|
+{% for s in states %}
+| {{ s.label }} | {{ s.ale | money(currency) }} | {{ s.ale_ci | ci(currency) }} | {{ s.var_95 | money(currency) }} | {{ s.es_95 | money(currency) }} | {{ s.prob_any_event | pct }} | {{ "%.2f" | format(s.loss_events_per_year) }} | {{ s.expected_loss_per_event | money(currency) if s.expected_loss_per_event is not none else "—" }} | {{ s.level }} ({{ s.likelihood }}×{{ s.impact }}) |
+{% endfor %}
+
+![Loss-exceedance curve]({{ lec_chart }})
+
+## Loss breakdown by loss form (current state)
+
+| Loss form | Mean annual amount | Share of ALE |
+|---|---|---|
+{% for lf in loss_forms %}
+| {{ lf.form }} | {{ lf.amount | money(currency) }} | {{ lf.share | pct(1) }} |
+{% endfor %}
+
+## Inputs
+
+| Input | Distribution | Provenance | Source | Rationale |
+|---|---|---|---|---|
+{% for i in inputs %}
+| {{ i.label }} | {{ i.distribution }} | {{ i.provenance }} | {{ i.source }} | {{ i.rationale }} |
+{% endfor %}
+
+## Control assessment
+
+{% if controls %}
+| Control | Conclusion | Basis | Samples | Exceptions | Posterior mean operating rate | 90% interval | Clopper-Pearson upper bound | ALE increase if it failed |
+|---|---|---|---|---|---|---|---|---|
+{% for c in controls %}
+| {{ c.control_id }} {{ c.name }} | {{ c.conclusion }} | {{ c.basis }} | {{ c.samples }} | {{ c.exceptions }} | {{ c.operating_mean | pct(1) }} | {{ c.operating_ci | pct_range }} | {{ c.clopper_pearson_upper }} | {{ c.ale_increase }} |
+{% endfor %}
+
+<details>
+<summary>Control assessment detail</summary>
+
+{% for c in controls %}
+- **{{ c.control_id }}**: {{ c.explanation }}
+{% endfor %}
+
+</details>
+{% else %}
+No controls are referenced by this scenario.
+{% endif %}
+
+## Treatment options
+
+{% if treatments %}
+Effects are compared against the current state **on the same simulated years** (common random numbers), so
+the paired standard error is smaller than the independent one; both are shown to make that precision gain
+visible.
+
+| Option | Type | ALE | ΔALE (paired SE) | ΔALE independent SE | ΔVaR 95% | Annualised cost | ROSI | Residual level | Within appetite |
+|---|---|---|---|---|---|---|---|---|---|
+{% for t in treatments %}
+| {{ t.option_id }} {{ t.title }} | {{ t.type }} | {{ t.ale | money(currency) }} | {{ t.ale_reduction | signed_money(currency) }} (±{{ t.ale_reduction_se_paired | money(currency) }}) | ±{{ t.ale_reduction_se_independent | money(currency) }} | {{ t.var_95_reduction | signed_money(currency) }} | {{ t.annualised_cost | money(currency) }} | {{ t.rosi }} | {{ t.residual_level }} | {{ "✅" if t.within_appetite else "❌" }} |
+{% endfor %}
+{% else %}
+No treatment options are defined for this scenario.
+{% endif %}
+
+## Sensitivity
+
+![Tornado chart]({{ tornado_chart }})
+
+Rank sensitivity: the Spearman correlation between each epistemic input's draw and the trial's conditional
+expected loss, which ranks where better measurement would narrow the ALE estimate the most (top
+{{ rank_sensitivity | length }} shown).
+
+| Input | Spearman ρ | Share of explained variance |
+|---|---|---|
+{% for rs in rank_sensitivity %}
+| {{ input_label(rs.input) }} | {{ "%+.2f" | format(rs.spearman_rho) }} | {{ rs.share_of_explained | pct(1) }} |
+{% endfor %}
+
+## Stress tests
+
+Named what-if scenarios, re-simulated on the same random numbers as the current state.
+
+| Stress | Description | ALE | Change vs. current ALE | VaR 95% | Resulting level |
+|---|---|---|---|---|---|
+{% for st in stress_tests %}
+| {{ st.name }} | {{ st.description }} | {{ st.ale | money(currency) }} | {{ "%+.0f%%" | format(st.ale_change_pct * 100) }} | {{ st.var_95 | money(currency) }} | {{ st.risk_level }} |
+{% endfor %}
+
+{% if qualitative_rows %}
+## Qualitative vs quantitative comparison
+
+| State | Quantitative level (L×I) | Qualitative level (L×I) | Agree |
+|---|---|---|---|
+{% for q in qualitative_rows %}
+| {{ q.name }} | {{ q.quant_level }} ({{ q.quant_li }}) | {{ q.qual_level }} ({{ q.qual_li }}) | {{ "✅" if q.agree else "⚠️ differs" }} |
+{% endfor %}
+
+{% endif %}
+## Evaluation
+
+| | |
+|---|---|
+| Decision level | {{ r.evaluation.decision_level }} |
+| Scenario ALE appetite threshold | {{ r.evaluation.ale_threshold | money(currency) }} |
+| ALE within threshold | {{ "✅" if r.evaluation.ale_within_threshold else "❌" }} |
+| P(true ALE within threshold) | {{ r.evaluation.prob_ale_within_threshold | pct }} |
+| Maximum acceptable level | {{ r.evaluation.max_acceptable_level }} |
+| Within appetite | {{ "✅" if r.evaluation.within_appetite else "❌" }} |
+| Treatment required | {{ "yes" if r.evaluation.treatment_required else "no" }} |
+| Acceptance authority | {{ role_label(r.evaluation.acceptance_authority) }} |
+| Max acceptance period | {{ r.evaluation.max_acceptance_days }} days |
+| Review cycle | every {{ r.evaluation.review_every_days }} days |
+
+{{ r.evaluation.rationale }}
+
+## Findings
+
+{% if findings %}
+| Severity | Code | Message |
+|---|---|---|
+{% for f in findings %}
+| {{ severity_mark.get(f.severity.value, f.severity.value) }} | `{{ f.code }}` | {{ f.message }} |
+{% endfor %}
+{% else %}
+No findings.
+{% endif %}
+
+## Model notes
+
+{% if r.model_notes %}
+{% for n in r.model_notes %}
+- {{ n }}
+{% endfor %}
+{% else %}
+None.
+{% endif %}
+
+## Reproducibility
+
+| | |
+|---|---|
+| Inputs fingerprint | `{{ repro.inputs_fingerprint }}` |
+| Result fingerprint | `{{ repro.result_fingerprint }}` |
+| Methodology fingerprint | `{{ repro.methodology_fingerprint }}` |
+| Engine version | {{ repro.engine_version }} |
+| Library versions | {% for lib, v in repro.library_versions.items() %}{{ lib }} {{ v }}{% if not loop.last %}, {% endif %}{% endfor %} |
+| Seed | {{ repro.seed }} |
+| Trials | {{ repro.trials | num }} |
+| As of | {{ repro.as_of.isoformat() }} |
+
+To reproduce this assessment:
+
+```
+{{ repro.command }}
+```

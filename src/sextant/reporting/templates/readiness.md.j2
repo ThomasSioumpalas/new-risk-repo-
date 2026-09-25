@@ -1,0 +1,52 @@
+> {{ disclaimer }}
+
+# Readiness: {{ report.framework_name }}
+
+| | |
+|---|---|
+| Publisher | {{ catalog.publisher }} |
+| Source | {{ catalog.source }} |
+| License | {{ catalog.license }} |
+| Text policy | {{ catalog.text_policy.value }} |
+| As of | {{ report.as_of.isoformat() }} |
+| Applicable requirements | {{ report.applicable }} |
+| Readiness indicator (addressed / applicable) | {{ report.readiness_indicator | pct(1) }} |
+| Coverage indicator (addressed, implemented or partially addressed / applicable) | {{ report.coverage_indicator | pct(1) }} |
+
+{% if is_iso %}
+> **Clause-level items need management-system evidence.** Requirements prefixed `C.` are ISMS process
+> clauses (ISO/IEC 27001:2022 clauses 4-10), not technical controls. Their readiness depends on
+> management-system evidence — for example meeting minutes, internal-audit reports, management-review
+> records or this risk register itself — not only on a mapped Annex A control. A `gap` or `planned` status
+> on a `C.*` item is a prompt to locate that evidence, not necessarily a missing control.
+{% endif %}
+
+## Counts by status
+
+| Status | Count |
+|---|---|
+{% for status, count in report.counts.items() %}
+| {{ status_label(status) }} | {{ count }} |
+{% endfor %}
+
+## Summary by group
+
+| Group | Applicable | {{ status_labels | join(" | ") }} |
+|---|---|{% for _ in status_labels %}---|{% endfor %}
+
+{% for g in summaries %}
+| {{ g.group_id }} {{ g.title }} | {{ g.applicable }} | {{ g.counts | join(" | ") }} |
+{% endfor %}
+
+## Requirements
+
+{% for gid, title, reqs in groups %}
+### {{ gid }} — {{ title }}
+
+| ID | Title | Status | Mapped controls | Related risks | Note |
+|---|---|---|---|---|---|
+{% for req in reqs %}
+| {{ req.requirement_id }} | {{ req.title }} | {{ status_label(req.status.value) }} | {% if req.controls %}{% for c in req.controls %}{{ c.control_id }} ({{ c.relationship.value }}, {{ c.readiness.value }}){% if not loop.last %}; {% endif %}{% endfor %}{% else %}—{% endif %} | {% if req.related_risks %}{{ req.related_risks | join(", ") }}{% else %}—{% endif %} | {{ req.note }} |
+{% endfor %}
+
+{% endfor %}

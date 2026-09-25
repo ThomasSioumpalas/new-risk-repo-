@@ -1,0 +1,134 @@
+# Sextant risk register — {{ org.name }}
+
+{% if org.fictional %}
+> **FICTIONAL organisation.** {{ org.name }}, its figures and its incidents are synthetic and used only to
+> demonstrate Sextant. They are not benchmarks and describe no real entity.
+{% endif %}
+
+{{ org.description }}
+
+| | |
+|---|---|
+| **Sector / jurisdiction** | {{ org.sector }} / {{ org.jurisdiction }} |
+| **As of** | {{ analysis.as_of.isoformat() }} |
+| **Methodology** | `{{ methodology.id }}` v{{ methodology.version }} (fingerprint `{{ fingerprint }}…`) |
+| **Engine version** | {{ engine_version }} |
+| **Simulation** | {{ analysis.trials | num }} trials per scenario, seed {{ analysis.seed }} |
+| **Currency** | {{ currency }} |
+
+## How to read this report
+
+Every scenario below has **three risk states**: *inherent* (without the linked controls), *current*
+(residual risk with controls as implemented and tested), and, where a treatment is selected, *target*
+(projected residual risk after that treatment). The **quantitative level** is the primary decision basis: a
+Monte Carlo simulation of annual loss, banded onto the methodology's likelihood/impact scale. The
+**qualitative level**, where an analyst also rated the scenario, is kept for communication and as a
+consistency check — see [Matrix vs quantitative ranking](#matrix-vs-quantitative-ranking) below for where
+the two disagree. "Within appetite" combines two tests: the scenario's expected annual loss (ALE) must be at
+or below the methodology's per-scenario threshold, **and** its quantitative level must be at or below the
+maximum acceptable level. Each scenario's full detail, including its assumptions and how to reproduce the
+numbers, is in `risks/<ID>.md`.
+
+## Register
+
+| ID | Title | Owner | Quant. level | Qual. level | Current ALE | 90% credible interval | VaR 95% | P(ALE within appetite) | Within appetite | Acceptance authority | Selected treatment | Target ALE |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+{% for row in rows %}
+| [{{ row.scenario_id }}](risks/{{ row.scenario_id }}.md) | {{ row.title }} | {{ row.owner }} | {{ row.quantitative_level }} | {{ row.qualitative_level }} | {{ row.ale | money(currency) }} | {{ row.ale_ci | ci(currency) }} | {{ row.var_95 | money(currency) }} | {{ row.prob_within | pct }} | {{ "✅" if row.within_appetite else "❌" }} | {{ row.authority }} | {{ row.selected_treatment }} | {{ row.target_ale }} |
+{% endfor %}
+
+## Portfolio
+
+The portfolio aggregates every scenario's **current-state** simulated annual loss, trial by trial.
+
+| Metric | Value |
+|---|---|
+| ALE | {{ portfolio.ale | money(currency) }} |
+| Median annual loss | {{ portfolio.median | money(currency) }} |
+| VaR 95% | {{ portfolio.var_95 | money(currency) }} |
+| Expected shortfall 95% | {{ portfolio.es_95 | money(currency) }} |
+| VaR 99% | {{ portfolio.var_99 | money(currency) }} |
+| Expected shortfall 99% | {{ portfolio.es_99 | money(currency) }} |
+| Sum of standalone VaR 95% | {{ portfolio.sum_of_standalone_var_95 | money(currency) }} |
+| Within tolerance | {{ "✅ yes" if portfolio.within_tolerance else "❌ no" }} |
+
+**Independence assumption:** {% for a in portfolio.assumptions %}{{ a }}{% if not loop.last %} {% endif %}{% endfor %}
+
+
+### Tolerance curve
+
+| Loss threshold | Max probability (appetite) | Simulated probability | 95% MC interval | Status |
+|---|---|---|---|---|
+{% for t in tolerance %}
+| {{ t.loss | money(currency) }} | {{ t.max_probability | pct }} | {{ t.simulated_probability | pct(1) }} | {{ t.mc_interval_95 | pct_range }} | {{ t.status }} |
+{% endfor %}
+
+### Scenario shares
+
+Two decompositions, because they answer different questions: **ALE share** drives the annual security
+budget; **tail share** (Euler allocation of the 95% expected shortfall) drives capital, insurance and board
+appetite. A scenario with frequent small losses can dominate the first without dominating the second, and a
+rare, severe scenario can be the reverse.
+
+| Scenario | ALE | ALE share | Standalone VaR 95% | Tail contribution (ES 95%) | Tail share |
+|---|---|---|---|---|---|
+{% for s in shares %}
+| [{{ s.scenario_id }}](risks/{{ s.scenario_id }}.md) {{ s.title }} | {{ s.ale | money(currency) }} | {{ s.ale_share | pct(1) }} | {{ s.standalone_var_95 | money(currency) }} | {{ s.tail_contribution_95 | money(currency) }} | {{ s.tail_share_95 | pct(1) }} |
+{% endfor %}
+
+## Charts
+
+![Risk matrix: current quantitative cell per scenario](charts/risk-matrix.png)
+
+![Current ALE by scenario, with 90% credible interval and the appetite threshold](charts/ale-by-scenario.png)
+
+![Portfolio loss-exceedance curve against the appetite tolerance curve](charts/portfolio-lec.png)
+
+## Matrix vs quantitative ranking
+
+The 1–5 × 1–5 risk matrix is useful for communication, but multiplying two ordinal ranks is not arithmetic:
+the same product can hide expected losses that differ by an order of magnitude (*range compression*), and a
+higher product can even sit on a *lower* expected loss than a lower product (*ranking reversal*; Cox, 2008).
+The table below ranks scenarios by current ALE and shows, alongside, the ordinal likelihood × impact score
+that the classic matrix approach would rank by instead.
+
+| Rank by ALE | Scenario | Current ALE | Quantitative level | Ordinal score (L×I) | Qualitative level | Within appetite |
+|---|---|---|---|---|---|---|
+{% for row in ranking %}
+| {{ row.ale_rank }} | [{{ row.scenario_id }}](risks/{{ row.scenario_id }}.md) {{ row.title }} | {{ row.ale | money(currency) }} | {{ row.quantitative_level }} | {{ row.ordinal_score }} | {{ row.qualitative_level }} | {{ "✅" if row.within_appetite else "❌" }} |
+{% endfor %}
+
+{% for line in commentary %}
+{{ line }}
+{% endfor %}
+
+## Findings
+
+Automated assessment-quality checks (the kind a second-line reviewer or auditor would raise), across all
+scenarios:
+
+{% if findings %}
+| Scenario | Severity | Code | Message |
+|---|---|---|---|
+{% for f in findings %}
+| [{{ f.scenario_id }}](risks/{{ f.scenario_id }}.md) | {{ f.severity }} | `{{ f.code }}` | {{ f.message }} |
+{% endfor %}
+{% else %}
+No findings.
+{% endif %}
+
+## Compliance readiness
+
+Each scenario's linked controls are also mapped to external frameworks. Readiness is a planning indicator,
+not a conformity assessment — see the disclaimer below.
+
+| Framework | Readiness (addressed / applicable) | Coverage | Report |
+|---|---|---|---|
+{% for cid, report in catalogs.items() %}
+| {{ report.framework_name }} | {{ report.readiness_indicator | pct(1) }} | {{ report.coverage_indicator | pct(1) }} | [readiness/{{ cid }}.md](readiness/{{ cid }}.md) |
+{% endfor %}
+
+A draft Statement of Applicability for ISO/IEC 27001:2022 Annex A is at
+[readiness/soa-iso27001_2022.md](readiness/soa-iso27001_2022.md).
+
+> {{ disclaimer }}
