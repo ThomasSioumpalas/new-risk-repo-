@@ -35,7 +35,8 @@ context.
 
 - **API keys.** Keys are generated as random 256-bit values. Only a SHA-256
   hash of a key is stored; the raw key is shown once, at creation time.
-  Verification uses a constant-time comparison to avoid timing side-channels.
+  Keys are looked up by their SHA-256 digest; because keys are 256-bit random values, a timing
+  side-channel on the lookup cannot reveal a usable key.
 - **Role-based access control (RBAC).** Roles are `viewer`, `auditor`,
   `analyst`, `control_owner`, `risk_owner`, `risk_manager`, `executive`, and
   `admin`. Authorisation is enforced per endpoint. Notably, `admin` carries

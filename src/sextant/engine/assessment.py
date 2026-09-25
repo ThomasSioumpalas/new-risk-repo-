@@ -284,11 +284,12 @@ def run_assessment(
     trials: int | None = None,
     seed: int | None = None,
     stress_tests: Sequence[StressTest] | None = None,
+    max_events: int | None = None,
 ) -> AssessmentRun:
     trials = trials or methodology.simulation.trials
     seed = methodology.simulation.seed if seed is None else seed
     model = build_model(scenario, controls, methodology, as_of)
-    run = simulate(model, trials=trials, seed=seed)
+    run = simulate(model, trials=trials, seed=seed, max_events=max_events)
 
     thresholds = default_thresholds(float(run.states[INHERENT].annual_loss.max()))
     named = [INHERENT, CURRENT] + ([TARGET] if TARGET in model.states else [])
@@ -299,7 +300,7 @@ def run_assessment(
     base_ale = states[CURRENT].stats.ale
     for test in stress_tests if stress_tests is not None else default_stress_tests(model):
         stressed = apply_stress(model, test)
-        srun = simulate(stressed, trials=trials, seed=seed, states=[CURRENT])
+        srun = simulate(stressed, trials=trials, seed=seed, states=[CURRENT], max_events=max_events)
         st = summarize(srun.states[CURRENT], thresholds)
         lvl = band_quantitative(methodology, st.expected_loss_events, st.expected_loss_per_event).risk_level
         stress_results.append(

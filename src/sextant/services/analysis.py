@@ -38,6 +38,7 @@ def what_if(
     trials: int,
     seed: int | None,
     max_trials: int,
+    max_events: int | None = None,
     as_of: date | None = None,
 ) -> QuantitativeAssessment:
     """Stateless analysis of a (possibly modified) scenario. Nothing is stored."""
@@ -54,6 +55,7 @@ def what_if(
         trials=trials,
         seed=seed,
         stress_tests=stress_tests or None,
+        max_events=max_events,
     ).result
 
 

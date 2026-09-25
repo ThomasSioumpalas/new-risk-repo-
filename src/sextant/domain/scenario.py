@@ -127,7 +127,7 @@ class SecondaryLoss(_Frozen):
     """
 
     probability: ProbabilityEstimate
-    components: list[LossComponent] = Field(min_length=1)
+    components: list[LossComponent] = Field(min_length=1, max_length=12)
 
 
 class ControlEffect(_Frozen):
@@ -194,8 +194,8 @@ class TreatmentOption(_Frozen):
     title: str
     type: TreatmentType
     description: str
-    add_controls: list[ControlEffect] = Field(default_factory=list)
-    change_controls: list[ControlChange] = Field(default_factory=list)
+    add_controls: list[ControlEffect] = Field(default_factory=list, max_length=20)
+    change_controls: list[ControlChange] = Field(default_factory=list, max_length=20)
     insurance: Insurance | None = None
     one_time_cost: float = Field(default=0.0, ge=0)
     annual_cost: float = Field(default=0.0, ge=0)
@@ -273,18 +273,19 @@ class Scenario(_Frozen):
     description: str
     category: RiskCategory
     owner: str = Field(description="Accountable risk owner (role or person).")
-    assets: list[str] = Field(min_length=1)
+    assets: list[str] = Field(min_length=1, max_length=50)
     threat: Threat
-    vulnerabilities: list[str] = Field(min_length=1)
+    vulnerabilities: list[str] = Field(min_length=1, max_length=50)
     properties: list[SecurityProperty] = Field(min_length=1)
 
     threat_event_frequency: FrequencyEstimate
     susceptibility: ProbabilityEstimate
-    primary_losses: list[LossComponent] = Field(min_length=1)
+    # Upper bounds keep a single request's simulation cost bounded (states × components × events).
+    primary_losses: list[LossComponent] = Field(min_length=1, max_length=12)
     secondary_loss: SecondaryLoss | None = None
 
-    controls: list[ControlEffect] = Field(default_factory=list)
-    treatments: list[TreatmentOption] = Field(default_factory=list)
+    controls: list[ControlEffect] = Field(default_factory=list, max_length=40)
+    treatments: list[TreatmentOption] = Field(default_factory=list, max_length=15)
     selected_treatment: str | None = Field(
         default=None, description="Treatment option proposed for approval; defines the target state."
     )

@@ -57,6 +57,7 @@ def create_assessment(
     trials: int | None = None,
     seed: int | None = None,
     max_trials: int = 50_000,
+    max_events: int | None = None,
 ) -> AssessmentRecord:
     require(actor, Permission.ASSESS)
     scenario = get_scenario(session, risk_id)
@@ -65,7 +66,9 @@ def create_assessment(
     if trials > max_trials:
         raise InvalidRequestError(f"trials limited to {max_trials} through the API")
     library = control_library(session)
-    run = run_assessment(scenario, library, methodology, as_of or utc_today(), trials=trials, seed=seed)
+    run = run_assessment(
+        scenario, library, methodology, as_of or utc_today(), trials=trials, seed=seed, max_events=max_events
+    )
     result = run.result
     referenced = sorted(
         {e.control_id for e in scenario.controls}

@@ -240,3 +240,13 @@ def test_analysis_and_compliance_endpoints(api: Api) -> None:
     port = api.get("vera", "/api/v1/analysis/portfolio", params={"trials": 2000})
     assert port.status_code == 200
     assert {s["scenario_id"] for s in port.json()["shares"]} == {"RSK-004", "RSK-007"}
+
+
+def test_resource_limits_on_what_if(api: Api) -> None:
+    scenario = api.get("ana", "/api/v1/risks/RSK-001").json()["scenario"]
+    huge = scenario | {"threat_event_frequency": {"dist": "constant", "value": 100000}}
+    r = api.post("vera", "/api/v1/analysis/what-if", {"scenario": huge, "trials": 20000})
+    assert r.status_code == 422
+    assert r.json()["error"] == "simulation_too_large"
+    many = scenario | {"primary_losses": scenario["primary_losses"] * 5}
+    assert api.post("vera", "/api/v1/analysis/what-if", {"scenario": many}).status_code == 422

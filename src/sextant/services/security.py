@@ -1,8 +1,8 @@
 """Identity, API keys and role-based permissions.
 
 * API keys are 256-bit random tokens. Only their SHA-256 digest is stored, so a
-  database leak does not leak usable keys, and lookup compares digests in
-  constant time.
+  database leak does not leak usable keys. Lookup is by digest: a timing
+  side channel reveals nothing usable about a random 256-bit key.
 * Permissions follow least privilege. The administrator manages users but has
   **no** risk-decision rights. Technical privilege is not business
   accountability.
@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 import hashlib
-import hmac
 import secrets
 from dataclasses import dataclass
 from enum import StrEnum
@@ -76,7 +75,3 @@ def generate_api_key() -> str:
 
 def hash_api_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
-
-
-def keys_match(candidate_hash: str, stored_hash: str) -> bool:
-    return hmac.compare_digest(candidate_hash, stored_hash)

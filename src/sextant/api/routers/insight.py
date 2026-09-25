@@ -33,6 +33,7 @@ def what_if(
         trials=body.trials,
         seed=body.seed,
         max_trials=settings.api_max_trials,
+        max_events=settings.api_max_events,
         as_of=body.as_of,
     )
 

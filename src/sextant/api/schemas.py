@@ -153,7 +153,7 @@ class WhatIfRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     scenario: Scenario
-    stress_tests: list[StressTest] = Field(default_factory=list)
+    stress_tests: list[StressTest] = Field(default_factory=list, max_length=10)
     trials: int = Field(default=10_000, ge=1_000)
     seed: int | None = Field(default=None, ge=0)
     as_of: date | None = None

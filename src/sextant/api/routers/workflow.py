@@ -51,6 +51,7 @@ def create_assessment(
         trials=body.trials,
         seed=body.seed,
         max_trials=settings.api_max_trials,
+        max_events=settings.api_max_events,
     )
     return _summary(rec)
 
