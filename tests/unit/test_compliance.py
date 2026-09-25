@@ -163,3 +163,12 @@ def test_register_detects_broken_references() -> None:
     data["scenarios"][0]["assets"] = ["AST-DOES-NOT-EXIST"]
     with pytest.raises(ValidationError, match="unknown asset"):
         RiskRegister.model_validate(data)
+
+
+def test_expired_acceptance_is_reported_as_expired() -> None:
+    from sextant.db.models import RiskAcceptance
+    from sextant.services.governance import acceptance_status
+
+    acc = RiskAcceptance(status="active", expires_on=date(2026, 1, 31))
+    assert acceptance_status(acc, today=date(2026, 1, 31)) == "active"
+    assert acceptance_status(acc, today=date(2026, 2, 1)) == "expired"
