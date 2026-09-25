@@ -130,12 +130,10 @@ def test_expired_evidence_does_not_count() -> None:
 
 
 def test_mapping_to_unknown_requirement_is_rejected() -> None:
-    ctl = _control("C1", "equal").model_copy(
-        update={"mappings": [{"framework": "nis2_2022_2555", "requirement": "99.9", "relationship": "equal"}]}
-    )
-    ctl = Control.model_validate(ctl.model_dump())
+    data = _control("C1", "equal").model_dump(mode="json")
+    data["mappings"] = [{"framework": "nis2_2022_2555", "requirement": "99.9", "relationship": "equal"}]
     with pytest.raises(ValueError, match="not in nis2"):
-        assess_readiness(load_catalog("nis2_2022_2555"), [ctl], {}, POLICY, AS_OF)
+        assess_readiness(load_catalog("nis2_2022_2555"), [Control.model_validate(data)], {}, POLICY, AS_OF)
 
 
 def test_example_register_loads_and_produces_soa() -> None:
