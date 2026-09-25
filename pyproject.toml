@@ -31,7 +31,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-postgres = ["psycopg[binary]>=3.2"]
+postgres = ["psycopg[binary]>=3.3.6"]
 
 [project.scripts]
 sextant = "sextant.cli.main:app"
