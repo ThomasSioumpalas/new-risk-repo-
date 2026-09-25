@@ -19,6 +19,8 @@ from rich.console import Console
 from rich.table import Table
 
 from sextant import ENGINE_VERSION
+from sextant.cli.admin import db_app, users_app
+from sextant.clock import utc_today
 from sextant.compliance.catalog import all_catalogs, load_catalog
 from sextant.compliance.readiness import assess_readiness
 from sextant.domain.methodology import Methodology
@@ -42,6 +44,9 @@ app = typer.Typer(
     add_completion=False,
     rich_markup_mode="rich",
 )
+app.add_typer(db_app, name="db")
+app.add_typer(users_app, name="users")
+
 # A fixed, generous width: tables (scenario ids, currency amounts, credible intervals)
 # must never be silently truncated, in the terminal or when output is captured/piped.
 console = Console(width=110)
@@ -67,8 +72,7 @@ SeedOption = Annotated[
 
 def _parse_as_of(value: str | None) -> date:
     if value is None:
-        # A calendar "as of" date, not a timestamp: there is no timezone to attach it to.
-        return date.today()  # noqa: DTZ011
+        return utc_today()
     try:
         return date.fromisoformat(value)
     except ValueError as exc:

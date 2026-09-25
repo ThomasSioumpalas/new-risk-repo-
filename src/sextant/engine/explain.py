@@ -113,6 +113,10 @@ def explain(a: QuantitativeAssessment) -> Explanation:
         )
     confident += (
         f"{len(tested)} of the {len(credited)} controls credited today are tested effective. "
+        if credited
+        else "No controls are credited in the current state. "
+    )
+    confident += (
         f"The Monte Carlo error on the ALE is ±{money(s.ale_mc_standard_error, cur)} ({a.trials:,} trials). "
         "This is simulation precision only and does not reflect input uncertainty."
     )
@@ -122,6 +126,9 @@ def explain(a: QuantitativeAssessment) -> Explanation:
     controls = (
         f"The linked controls, as implemented and tested, reduce the ALE from {money(inh.stats.ale, cur)} "
         f"(inherent) to {money(s.ale, cur)}, a reduction of {pct:.0%}."
+        if a.controls
+        else "No control is credited in the current state, so current risk equals inherent risk "
+        f"({money(s.ale, cur)}). Controls reflected in measured inputs are listed under the assumptions."
     )
     if a.controls:
         parts = [

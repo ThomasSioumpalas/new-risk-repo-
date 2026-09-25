@@ -85,6 +85,11 @@ Some findings from the example register:
 * **Cheapest is not best.** Insurance has the best ROSI for ransomware, but it
   does nothing about the likelihood of a warehouse outage. The report puts
   ΔALE, ΔVaR, cost and residual level side by side.
+* **Individually acceptable, collectively not.** Six of the eight risks are
+  within appetite on their own, but the portfolio breaches the board's
+  tolerance curve: the probability of losing ≥ €1M in a year is 66 % against
+  a 25 % limit. Ransomware is 22 % of the average annual loss but 48 % of the
+  bad-year tail (Euler allocation of expected shortfall).
 * **Evidence matters.** Backup restores failed once in 12 tests, so the
   quarterly control is concluded *not effective* under the audit convention,
   and the model credits it with its posterior operating rate (≈ 86 %), not
