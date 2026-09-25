@@ -252,3 +252,18 @@ def test_resource_limits_on_what_if(api: Api) -> None:
     assert r.json()["error"] == "simulation_too_large"
     many = scenario | {"primary_losses": scenario["primary_losses"] * 5}
     assert api.post("vera", "/api/v1/analysis/what-if", {"scenario": many}).status_code == 422
+
+
+def test_revocation_requires_equal_authority(api: Api) -> None:
+    a = _final(api, "RSK-006", user="mira")
+    acc = api.post(
+        "eve", "/api/v1/risks/RSK-006/acceptances", {"assessment_id": a["id"], "justification": JUSTIFICATION}
+    ).json()
+    reason = {"reason": "Supplier outage changed the exposure materially."}
+    assert api.post("olga", f"/api/v1/acceptances/{acc['id']}/revoke", reason).status_code == 403
+    revoked = api.post("eve", f"/api/v1/acceptances/{acc['id']}/revoke", reason)
+    assert revoked.status_code == 200
+    assert revoked.json()["status"] == "revoked"
+    assert api.post("eve", f"/api/v1/acceptances/{acc['id']}/revoke", reason).status_code == 409
+    trail = api.get("audrey", "/api/v1/audit", params={"entity_type": "risk", "entity_id": "RSK-006"}).json()
+    assert [e["action"] for e in trail][-2:] == ["risk.accepted", "risk.acceptance_revoked"]
