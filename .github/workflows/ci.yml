@@ -67,6 +67,37 @@ jobs:
           path: coverage.xml
           if-no-files-found: error
 
+  integration-postgres:
+    name: Integration tests (PostgreSQL 16)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sextant
+          POSTGRES_PASSWORD: sextant-ci-only
+          POSTGRES_DB: sextant_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sextant"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SEXTANT_TEST_DATABASE_URL: postgresql+psycopg://sextant:sextant-ci-only@localhost:5432/sextant_test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies (with PostgreSQL driver)
+        run: uv sync --locked --extra postgres
+
+      - name: Run integration tests against PostgreSQL
+        run: uv run pytest tests/integration -q
+
   audit:
     name: Dependency audit
     runs-on: ubuntu-latest
@@ -83,7 +114,7 @@ jobs:
         run: uv sync --locked
 
       - name: Export frozen requirements
-        run: uv export --frozen --no-dev --no-hashes --format requirements-txt > /tmp/req.txt
+        run: uv export --frozen --no-dev --no-hashes --no-emit-project --format requirements-txt > /tmp/req.txt
 
       - name: pip-audit
         run: uv run pip-audit -r /tmp/req.txt --strict

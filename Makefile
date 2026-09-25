@@ -22,13 +22,13 @@ cov: ## Run tests with coverage report
 	uv run pytest --cov=sextant --cov-report=term --cov-report=xml
 
 audit: ## Audit locked dependencies for known vulnerabilities
-	uv export --frozen --no-dev --no-hashes --format requirements-txt > /tmp/req.txt
+	uv export --frozen --no-dev --no-hashes --no-emit-project --format requirements-txt > /tmp/req.txt
 	uv run pip-audit -r /tmp/req.txt --strict
 
 check: lint typecheck test ## Everything CI checks, run locally
 
 examples: ## Regenerate the committed example reports
-	uv run sextant report examples/halcyon --out examples/reports
+	uv run sextant report examples/halcyon --out examples/reports --as-of 2026-09-01
 
 serve: ## Run the API locally with auto-reload
 	uv run uvicorn sextant.api.app:app --reload

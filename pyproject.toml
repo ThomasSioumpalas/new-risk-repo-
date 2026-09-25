@@ -104,7 +104,10 @@ addopts = "-ra --strict-markers"
 markers = [
     "slow: statistical validation tests with large simulations",
 ]
-filterwarnings = ["error::DeprecationWarning:sextant.*"]
+filterwarnings = [
+    "error::DeprecationWarning:sextant.*",
+    "ignore:Using `httpx` with `starlette.testclient`",
+]
 
 [tool.coverage.run]
 source = ["sextant"]
