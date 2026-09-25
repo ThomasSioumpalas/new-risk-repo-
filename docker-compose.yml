@@ -1,3 +1,11 @@
+# Local production-like stack: API + PostgreSQL 16.
+#
+#   export POSTGRES_PASSWORD=$(openssl rand -hex 16)
+#   docker compose up -d --build
+#   docker compose run --rm api sextant db seed examples/halcyon
+#   docker compose run --rm api sextant users create alice --role analyst
+#   curl -H "X-API-Key: <key>" http://127.0.0.1:8000/api/v1/risks
+#
 services:
   db:
     image: postgres:16-alpine

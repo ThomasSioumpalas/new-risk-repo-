@@ -24,8 +24,6 @@ class Settings(BaseSettings):
     api_max_trials: int = Field(default=50_000, ge=1_000, le=200_000)
     # Upper bound on simulated loss events per API request (memory guard).
     api_max_events: int = Field(default=2_000_000, ge=10_000)
-    # Bootstrap admin key (only used by `sextant users bootstrap`); never logged.
-    bootstrap_admin_key: str | None = Field(default=None, repr=False)
 
 
 @lru_cache

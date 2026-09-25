@@ -42,10 +42,15 @@ context.
   `admin`. Authorisation is enforced per endpoint. Notably, `admin` carries
   **no risk-acceptance authority** — administrative/technical privilege is
   kept separate from the business accountability of accepting a risk.
-- **Segregation of duties (SoD).** The person who assessed a risk cannot also
-  be the one who accepts it; acceptance additionally requires an authority
-  rank appropriate to the risk level (`risk_owner` < `risk_manager` <
-  `executive`).
+- **Segregation of duties (SoD).** Whoever prepared, overrode or finalised an
+  assessment cannot accept its residual risk or approve its treatment plan.
+  Acceptance also requires an authority rank appropriate to the risk level
+  (`risk_owner` < `risk_manager` < `executive`), escalated to `executive` for
+  any risk outside appetite. Acceptances are time-limited and are invalidated
+  automatically when a reassessment raises the level.
+- **Immutable assessments.** Finalised assessments cannot be changed or
+  deleted. The service refuses the change, and database triggers (SQLite and
+  PostgreSQL) enforce the same rule.
 - **Audit log.** Append-only and enforced at the database level with
   triggers, and hash-chained (each entry commits to the hash of the previous
   one) so that tampering is *evident*. This makes the log **tamper-evident,
@@ -58,9 +63,13 @@ context.
   remain in the organisation's own system of record, referenced by digest and
   metadata.
 - **Input validation and resource limits.** All API payloads are validated
-  with Pydantic. Monte Carlo simulation size is bounded by
-  `SEXTANT_API_MAX_TRIALS` to guard against resource-exhaustion via
-  oversized simulation requests.
+  with Pydantic (`extra="forbid"`, semantic checks on estimates, bounded list
+  sizes). Simulation cost per request is bounded by `SEXTANT_API_MAX_TRIALS`
+  and by a simulated-event budget (`SEXTANT_API_MAX_EVENTS`), which guards
+  against resource exhaustion through oversized scenarios.
+- **Error handling and logging.** Errors return a JSON `{error, message}`
+  body without stack traces. Logs are structured JSON with a request ID and
+  the actor, and never contain API keys or request bodies.
 - **No unsafe deserialization.** YAML is only ever read with
   `yaml.safe_load`. No `pickle`, and no `eval`/`exec` on external input.
 - **Secrets.** Read only from the environment (`SEXTANT_*` variables). None

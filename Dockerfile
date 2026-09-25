@@ -50,6 +50,9 @@ COPY --from=builder /app/src /app/src
 COPY --from=builder /app/alembic.ini /app/alembic.ini
 COPY --from=builder /app/migrations /app/migrations
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+# The fictional example register, so a demo database can be seeded inside the container:
+#   docker compose run --rm api sextant db seed examples/halcyon
+COPY examples/halcyon /app/examples/halcyon
 
 RUN chmod +x /app/docker-entrypoint.sh \
     && chown -R sextant:sextant /app
