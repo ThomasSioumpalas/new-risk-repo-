@@ -8,7 +8,7 @@ import uuid
 from collections.abc import Awaitable, Callable
 
 import structlog
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
@@ -81,6 +81,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             duration_ms=round((time.perf_counter() - start) * 1000, 1),
         )
         return response
+
+    @app.exception_handler(HTTPException)
+    async def http_error(_: Request, exc: HTTPException) -> JSONResponse:
+        # Keep one error shape across the API: {"error": ..., "message": ...}.
+        body = (
+            exc.detail
+            if isinstance(exc.detail, dict)
+            else {"error": "http_error", "message": str(exc.detail)}
+        )
+        return JSONResponse(status_code=exc.status_code, content=body, headers=exc.headers)
 
     @app.exception_handler(DomainError)
     async def domain_error(_: Request, exc: DomainError) -> JSONResponse:

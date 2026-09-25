@@ -33,7 +33,9 @@ def _final(api: Api, risk_id: str, user: str = "ana") -> dict[str, Any]:
 
 def test_health_and_authentication(api: Api) -> None:
     assert api.client.get("/health").json() == {"status": "ok"}
-    assert api.client.get("/api/v1/risks").status_code == 401
+    unauth = api.client.get("/api/v1/risks")
+    assert unauth.status_code == 401
+    assert unauth.json()["error"] == "unauthenticated"
     assert api.client.get("/api/v1/risks", headers={"X-API-Key": "sxt_wrong"}).status_code == 401
     r = api.get("vera", "/api/v1/risks")
     assert r.status_code == 200
