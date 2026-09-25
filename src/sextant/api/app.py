@@ -74,6 +74,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         route = request.scope.get("route")
         log.info(
             "request",
+            actor=getattr(request.state, "actor", None),
             method=request.method,
             route=getattr(route, "path", request.url.path),
             status=response.status_code,

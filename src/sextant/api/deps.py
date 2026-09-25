@@ -38,6 +38,7 @@ SettingsDep = Annotated[Settings, Depends(get_settings_dep)]
 
 
 def get_actor(
+    request: Request,
     session: SessionDep,
     x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
 ) -> Actor:
@@ -52,6 +53,9 @@ def get_actor(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"error": "unauthenticated", "message": "invalid or inactive API key"},
         )
+    # Sync endpoints run in a worker thread, so contextvars would not reach the access log;
+    # request.state does.
+    request.state.actor = actor.username
     structlog.contextvars.bind_contextvars(actor=actor.username)
     return actor
 
