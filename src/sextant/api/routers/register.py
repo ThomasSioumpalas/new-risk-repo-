@@ -17,7 +17,7 @@ from sextant.domain.scenario import Scenario
 from sextant.engine.controls import ControlAssessment, assess_control
 from sextant.services import register as svc
 from sextant.services.assessments import latest_final
-from sextant.services.errors import NotFoundError
+from sextant.services.errors import InvalidRequestError
 from sextant.services.security import ROLE_PERMISSIONS, Permission
 
 router = APIRouter(prefix="/api/v1", tags=["register"])
@@ -53,7 +53,7 @@ def list_assets(actor: ActorDep, session: SessionDep) -> list[Asset]:
 @router.put("/assets/{asset_id}", response_model=Asset)
 def put_asset(asset_id: str, body: Asset, actor: ActorDep, session: SessionDep) -> Asset:
     if body.id != asset_id:
-        raise NotFoundError("asset id in path and body differ")
+        raise InvalidRequestError("asset id in path and body differ")
     svc.upsert_asset(session, actor, body)
     return body
 
@@ -85,7 +85,7 @@ def get_control(control_id: str, actor: ActorDep, session: SessionDep) -> Contro
 @router.put("/controls/{control_id}", response_model=Control)
 def put_control(control_id: str, body: Control, actor: ActorDep, session: SessionDep) -> Control:
     if body.id != control_id:
-        raise NotFoundError("control id in path and body differ")
+        raise InvalidRequestError("control id in path and body differ")
     svc.upsert_control(session, actor, body)
     return body
 
@@ -152,6 +152,6 @@ def get_risk(risk_id: str, actor: ActorDep, session: SessionDep) -> RiskDetail:
 @router.put("/risks/{risk_id}", response_model=RiskDetail)
 def update_risk(risk_id: str, body: RiskUpdate, actor: ActorDep, session: SessionDep) -> RiskDetail:
     if body.scenario.id != risk_id:
-        raise NotFoundError("risk id in path and body differ")
+        raise InvalidRequestError("risk id in path and body differ")
     rec = svc.update_risk(session, actor, body.scenario, body.version)
     return RiskDetail(**_summary(session, rec).model_dump(), scenario=body.scenario)

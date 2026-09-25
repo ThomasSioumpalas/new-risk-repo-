@@ -183,9 +183,11 @@ def test_control_tests_are_append_only(api: Api) -> None:
         "samples": 10,
         "exceptions": 0,
     }
-    r = api.post("colin", "/api/v1/controls/CTL-TPR-01/tests", test)
-    assert r.status_code == 201
-    assert r.json()["samples"] == 30  # 20 earlier + 10 new within the look-back window
+    assert api.post("colin", "/api/v1/controls/CTL-TPR-01/tests", test).status_code == 201
+    # Evaluate as of a fixed date so the look-back window does not depend on when the test runs.
+    eff = api.get("colin", "/api/v1/controls/CTL-TPR-01/effectiveness", params={"as_of": "2026-09-01"}).json()
+    assert eff["samples"] == 30  # 20 earlier + 10 new within the look-back window
+    assert eff["conclusion"] == "effective"
     control = api.get("ana", "/api/v1/controls/CTL-TPR-01").json()
     control["tests"] = control["tests"][:1]
     assert api.put("ana", "/api/v1/controls/CTL-TPR-01", control).status_code == 409
